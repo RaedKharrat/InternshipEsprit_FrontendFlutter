@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:snow_login/screens/login_screen.dart';
-void main(){
+import 'package:snow_login/screens/forgetpassword.dart'; // Ensure this path is correct
+import 'package:snow_login/screens/verifyCodefp.dart'; // Adjust import to match file path
+import 'package:snow_login/screens/newpassword.dart'; // Adjust import to match file path
+
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp( const MyApp());
+    runApp(const MyApp());
   });
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: const LoginScreen(),
+      routes: {
+        '/forgetpassword': (context) => const ForgetPasswordScreen(),
+        '/verifyOTP': (context) => const VerifyCodefpScreen(), 
+        '/changepwd': (context) => const NewPasswordScreen(),
+
+      },
     );
   }
 }

@@ -1,17 +1,16 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:snow_login/utils/animations.dart';
 import '../data/bg_data.dart';
 import '../utils/text_utils.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgetPasswordScreen extends StatefulWidget {
+  const ForgetPasswordScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgetPasswordScreen> createState() => _ForgetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   int selectedIndex = 0;
   bool showOption = false;
 
@@ -26,36 +25,32 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Expanded(
                 child: showOption
-                    ? ShowUpAnimation(
-                        delay: 100,
-                        child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: bgList.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedIndex = index;
-                                  });
-                                },
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: bgList.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = index;
+                              });
+                            },
+                            child: CircleAvatar(
+                              radius: 30,
+                              backgroundColor: selectedIndex == index
+                                  ? Colors.white
+                                  : Colors.transparent,
+                              child: Padding(
+                                padding: const EdgeInsets.all(1),
                                 child: CircleAvatar(
                                   radius: 30,
-                                  backgroundColor: selectedIndex == index
-                                      ? Colors.white
-                                      : Colors.transparent,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(1),
-                                    child: CircleAvatar(
-                                      radius: 30,
-                                      backgroundImage:
-                                          AssetImage(bgList[index]),
-                                    ),
-                                  ),
+                                  backgroundImage: AssetImage(bgList[index]),
                                 ),
-                              );
-                            }),
-                      )
+                              ),
+                            ),
+                          );
+                        })
                     : const SizedBox()),
             const SizedBox(
               width: 20,
@@ -131,25 +126,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(25),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Spacer(),
-                        Center(
-                          child: Column(
-                            children: [
-                              TextUtil(
-                                text: "Sign In",
-                                weight: true,
-                                size: 30,
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                        const Spacer(),
                         TextUtil(
-                          text: "Email",
+                          text: "Forget Password",
+                          weight: true,
+                          size: 30,
                         ),
+                        const SizedBox(height: 15),
+                        
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
@@ -169,57 +155,34 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const Spacer(),
-                        TextUtil(
-                          text: "Password",
-                        ),
-                        Container(
-                          height: 35,
-                          decoration: const BoxDecoration(
-                              border: Border(bottom: BorderSide(color: Colors.white))),
-                          child: TextFormField(
-                            style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
-                              hintText: 'Enter your password',
-                              hintStyle: TextStyle(color: Colors.white70),
-                              suffixIcon: Icon(
-                                Icons.lock,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/verifyOTP');
+                          },
+                          child: Container(
+                            height: 40,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
                                 color: Colors.white,
-                              ),
-                              fillColor: Colors.white,
-                              border: InputBorder.none,
+                                borderRadius: BorderRadius.circular(30)),
+                            alignment: Alignment.center,
+                            child: TextUtil(
+                              text: "Send Reset Link",
+                              color: Colors.black,
                             ),
                           ),
                         ),
                         const Spacer(),
-                        Row(
-                          children: [
-                          
-                            const SizedBox(width: 10,),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/forgetpassword');
-                                },
-                                child: TextUtil(
-                                  text: "* Forget Your Password ?",
-                                  size: 10,
-                                  weight: true,
-                                ),
-                              ),
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: TextUtil(
+                              text: "Back to Login",
+                              size: 12,
+                              weight: true,
                             ),
-                          ],
-                        ),
-                        const Spacer(),
-                        Container(
-                          height: 40,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30)),
-                          alignment: Alignment.center,
-                          child: TextUtil(
-                            text: "Log In",
-                            color: Colors.black,
                           ),
                         ),
                         const Spacer(),

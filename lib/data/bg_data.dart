@@ -1,6 +1,7 @@
 /// List of Background Images////
 List<String>bgList=[
-  "assets/bg1.jpeg",
+  "assets/bg1.png",
+  "assets/bg1.jpeg"
   "assets/bg2.jpeg",
   "assets/bg3.jpeg",
   "assets/bg4.webp",
