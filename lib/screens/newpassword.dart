@@ -138,9 +138,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           size: 30,
                         ),
                         const SizedBox(height: 15),
-                        TextUtil(
-                          text: "New Password",
-                        ),
+                        
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
@@ -169,9 +167,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           ),
                         ),
                         const SizedBox(height: 15),
-                        TextUtil(
-                          text: "Confirm Password",
-                        ),
+                        
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(

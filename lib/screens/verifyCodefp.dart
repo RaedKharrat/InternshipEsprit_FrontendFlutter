@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../data/bg_data.dart'; // Ensure bgList is defined here
 import '../utils/text_utils.dart'; // Ensure TextUtil is defined here
+import '../widgets/toolbar.dart'; // Import your custom toolbar
 
 class VerifyCodefpScreen extends StatefulWidget {
   const VerifyCodefpScreen({super.key});
@@ -17,77 +18,6 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        height: 49,
-        width: double.infinity,
-        child: Row(
-          children: [
-            Expanded(
-              child: showOption
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: bgList.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                          },
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: selectedIndex == index
-                                ? Colors.white
-                                : Colors.transparent,
-                            child: Padding(
-                              padding: const EdgeInsets.all(1),
-                              child: CircleAvatar(
-                                radius: 30,
-                                backgroundImage: AssetImage(bgList[index]),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : const SizedBox(),
-            ),
-            const SizedBox(width: 20),
-            showOption
-                ? GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showOption = false;
-                      });
-                    },
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  )
-                : GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showOption = true;
-                      });
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(1),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: AssetImage(bgList[selectedIndex]),
-                        ),
-                      ),
-                    ),
-                  ),
-          ],
-        ),
-      ),
       body: Stack(
         children: [
           Container(
@@ -136,9 +66,6 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
                           size: 30,
                         ),
                         const SizedBox(height: 15),
-                        TextUtil(
-                          text: "Code",
-                        ),
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
@@ -185,6 +112,10 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
               ),
             ),
           ),
+          // Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: const CustomToolbar(), // Add your toolbar here
+          // ),
         ],
       ),
     );

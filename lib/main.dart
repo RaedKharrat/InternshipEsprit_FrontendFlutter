@@ -4,6 +4,7 @@ import 'package:snow_login/screens/login_screen.dart';
 import 'package:snow_login/screens/forgetpassword.dart'; // Ensure this path is correct
 import 'package:snow_login/screens/verifyCodefp.dart'; // Adjust import to match file path
 import 'package:snow_login/screens/newpassword.dart'; // Adjust import to match file path
+import 'package:snow_login/screens/homepage.dart';
 
 
 void main() {
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
         '/forgetpassword': (context) => const ForgetPasswordScreen(),
         '/verifyOTP': (context) => const VerifyCodefpScreen(), 
         '/changepwd': (context) => const NewPasswordScreen(),
+        '/homepage': (context) => const HomePage(),
+
 
       },
     );

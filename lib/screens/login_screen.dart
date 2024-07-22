@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:snow_login/utils/animations.dart';
 import '../data/bg_data.dart';
 import '../utils/text_utils.dart';
+import 'homepage.dart'; // Import the HomePage
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -193,7 +194,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Spacer(),
                         Row(
                           children: [
-                          
                             const SizedBox(width: 10,),
                             Expanded(
                               child: GestureDetector(
@@ -210,16 +210,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                         const Spacer(),
-                        Container(
-                          height: 40,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30)),
-                          alignment: Alignment.center,
-                          child: TextUtil(
-                            text: "Log In",
-                            color: Colors.black,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const HomePage()),
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30)),
+                            alignment: Alignment.center,
+                            child: TextUtil(
+                              text: "Log In",
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                         const Spacer(),
