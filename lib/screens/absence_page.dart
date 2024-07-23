@@ -41,166 +41,221 @@ class _AbsencePageState extends State<AbsencePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: const EdgeInsets.all(30),
-                  child: Center(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.circular(15),
-                        color: Colors.black.withOpacity(0.4),
+  margin: const EdgeInsets.all(30),
+  child: Center(
+    child: Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white),
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.black.withOpacity(0.4),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Center(
+                    child: Text(
+                      'Absence Form',
+                      style: Theme.of(context).textTheme.headline5?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Classe',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.black54,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderSide: BorderSide.none,
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 20),
-                                  Center(
-                                    child: Text(
-                                      'Absence Form',
-                                      style: Theme.of(context).textTheme.headline5?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 30),
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                      labelText: 'Classe',
-                                      labelStyle: TextStyle(color: Colors.white70),
-                                      filled: true,
-                                      fillColor: Colors.black54,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                    ),
-                                    style: const TextStyle(color: Colors.white),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter some text';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                      labelText: 'Module',
-                                      labelStyle: TextStyle(color: Colors.white70),
-                                      filled: true,
-                                      fillColor: Colors.black54,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                    ),
-                                    style: const TextStyle(color: Colors.white),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter some text';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                      labelText: 'Séance',
-                                      labelStyle: TextStyle(color: Colors.white70),
-                                      filled: true,
-                                      fillColor: Colors.black54,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                    ),
-                                    style: const TextStyle(color: Colors.white),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter some text';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  const SizedBox(height: 16.0),
-                                  TextFormField(
-                                    decoration: const InputDecoration(
-                                      labelText: 'Date',
-                                      labelStyle: TextStyle(color: Colors.white70),
-                                      filled: true,
-                                      fillColor: Colors.black54,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                    ),
-                                    readOnly: true,
-                                    controller: TextEditingController(
-                                      text: _selectedDate != null
-                                          ? '${_selectedDate!.toLocal()}'.split(' ')[0]
-                                          : '',
-                                    ),
-                                    onTap: () async {
-                                      final DateTime? pickedDate = await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2101),
-                                      );
-                                      if (pickedDate != null && pickedDate != _selectedDate) {
-                                        setState(() {
-                                          _selectedDate = pickedDate;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                  const SizedBox(height: 20.0),
-                                  Center(
-                                    child: SizedBox(
-                                      width: double.infinity,
-                                      height: 40,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          if (_formKey.currentState!.validate()) {
-                                            // Process data
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          primary: Colors.red[900], // Button color
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(30),
-                                          ),
-                                        ),
-                                        child: const Text(
-                                          'Submit',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 30.0), // Space between form and table
-                                ],
-                              ),
-                            ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Module',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.black54,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Séance',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.black54,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Date',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.black54,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    readOnly: true,
+                    controller: TextEditingController(
+                      text: _selectedDate != null
+                          ? '${_selectedDate!.toLocal()}'.split(' ')[0]
+                          : '',
+                    ),
+                    onTap: () async {
+                      final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (pickedDate != null && pickedDate != _selectedDate) {
+                        setState(() {
+                          _selectedDate = pickedDate;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20.0),
+                  Center(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            // Process data
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.orange, // Button color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        icon: const Icon(Icons.save, color: Colors.white), // Save icon
+                        label: const Text(
+                          'Enregistrer',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 20.0), // Space between buttons
+                  Center(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Cancel action
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red, // Button color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        icon: const Icon(Icons.cancel, color: Colors.white), // Cancel icon
+                        label: const Text(
+                          'Annuler',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0), // Space between buttons
+                  Center(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Download PDF action
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.green), // Button border color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        icon: const Icon(Icons.file_download, color: Colors.green), // Download icon
+                        label: const Text(
+                          'Export Excel',
+                          style: TextStyle(
+                            color: Colors.green, // Text color
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ),
+),
+
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 30),
                   child: SingleChildScrollView(
@@ -277,34 +332,66 @@ class _AbsencePageState extends State<AbsencePage> {
   }
 
   Future<String?> _showObservationDialog(int index) async {
-    String? observation;
-    return await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Enter Observation for your student'),
-          content: TextField(
-            onChanged: (value) {
-              observation = value;
-            },
-            decoration: const InputDecoration(hintText: "Observation"),
+  String? observation;
+  return await showDialog<String>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          'Enter Observation to Student',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.red[900],
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+        ),
+        content: TextField(
+          onChanged: (value) {
+            observation = value;
+          },
+          decoration: InputDecoration(
+            hintText: "click to write your observation",
+            filled: true,
+            fillColor: Colors.black12,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
             ),
-            TextButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                Navigator.of(context).pop(observation);
-              },
+            hintStyle: TextStyle(color: Colors.grey[600]),
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: Colors.red[900],
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ],
-        );
-      },
-    );
-  }
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text(
+              'Confirm',
+              style: TextStyle(
+                color: Colors.green[700],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(observation);
+            },
+          ),
+        ],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        backgroundColor: Colors.white,
+      );
+    },
+  );
+}
+
 }

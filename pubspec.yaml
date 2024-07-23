@@ -67,7 +67,9 @@ flutter:
     - assets/bg6.jpeg
     - assets/bg7.jpg
     - assets/bg8.jpeg
-    - assets/logoEsprit copy.png  # Add this line if you are using a logo image
+    - assets/logoEsprit copy.png
+    - assets/avatar.jpg 
+     # Add this line if you are using a logo image
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

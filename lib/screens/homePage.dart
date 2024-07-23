@@ -15,11 +15,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // List of text and corresponding icons for each box
     final List<Map<String, dynamic>> boxItems = [
-      {'text': 'Schedules', 'icon': Icons.calendar_today},
-      {'text': 'Class Notebook', 'icon': Icons.book},
+      {'text': 'Emplois du temps', 'icon': Icons.calendar_today},
+      {'text': 'Cahier de classe', 'icon': Icons.book},
       {'text': 'Absence', 'icon': Icons.remove_circle},
-      {'text': 'Assessment', 'icon': Icons.assessment},
       {'text': 'Reclamations', 'icon': Icons.report},
+      {'text': 'Evaluations', 'icon': Icons.assessment},
     ];
 
     return Scaffold(
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Welcome to teachers space Mr. Jack 👋🏻',
+                      'Welcome to teachers space Mr. John Doe 👋🏻',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -64,65 +64,73 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 20.0,
-                    mainAxisSpacing: 20.0,
-                    children: List.generate(boxItems.length, (index) {
-                      return GestureDetector(
-                        onTap: () {
-                          if (boxItems[index]['text'] == 'Reclamations') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ReclamationsScreen(),
-                              ),
-                            );
-                          } else if (boxItems[index]['text'] == 'Absence') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AbsencePage(),
-                              ),
-                            );
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5), // Decreased opacity
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.5), // Slightly darker shadow
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  boxItems[index]['icon'] as IconData,
-                                  color: Colors.white,
-                                  size: 40,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 20.0,
+                          mainAxisSpacing: 20.0,
+                          children: List.generate(boxItems.length, (index) {
+                            return GestureDetector(
+                              onTap: () {
+                                if (boxItems[index]['text'] == 'Reclamations') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ReclamationsScreen(),
+                                    ),
+                                  );
+                                } else if (boxItems[index]['text'] == 'Absence') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AbsencePage(),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5), // Decreased opacity
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5), // Slightly darker shadow
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  boxItems[index]['text'] as String,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        boxItems[index]['icon'] as IconData,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        boxItems[index]['text'] as String,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          }),
                         ),
-                      );
-                    }),
+                      ),
+                      // Spacer to add space between the grid and the toolbar
+                      const SizedBox(height: 80.0), // Adjust height as needed
+                    ],
                   ),
                 ),
               ),

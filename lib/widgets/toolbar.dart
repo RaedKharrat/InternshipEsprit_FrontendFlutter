@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:snow_login/screens/homePage.dart'; // Import the HomePage
+import 'package:snow_login/screens/profilInfo.dart'; // Import the ProfilePage
 
 class CustomToolbar extends StatelessWidget {
   const CustomToolbar({Key? key}) : super(key: key);
@@ -15,13 +17,19 @@ class CustomToolbar extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.home, color: Colors.white),
             onPressed: () {
-              // Handle home button press
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()), // Navigate to HomePage
+              );
             },
           ),
           IconButton(
-            icon: const Icon(Icons.account_circle, color: Colors.white), // Changed to profile avatar icon
+            icon: const Icon(Icons.account_circle, color: Colors.white),
             onPressed: () {
-              // Handle profile button press
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              );
             },
           ),
           IconButton(
