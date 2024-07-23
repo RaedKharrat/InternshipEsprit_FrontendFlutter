@@ -3,7 +3,7 @@
 A new Flutter project.
 
 
-# Result
+# First Result
 
 <img src ="https://github.com/Mirzaazmath/dynamic_login_page_flutter/blob/main/assets/output/result.gif" height="400">
 
