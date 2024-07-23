@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../screens/reclamations.dart'; // Correct the import path
+import '../screens/absence_page.dart'; // Import the AbsencePage
 import '../widgets/toolbar.dart'; // Ensure you import the custom toolbar
 
 class HomePage extends StatefulWidget {
@@ -14,8 +16,9 @@ class _HomePageState extends State<HomePage> {
     // List of text and corresponding icons for each box
     final List<Map<String, dynamic>> boxItems = [
       {'text': 'Schedules', 'icon': Icons.calendar_today},
-      {'text': 'Assessment', 'icon': Icons.assessment},
       {'text': 'Class Notebook', 'icon': Icons.book},
+      {'text': 'Absence', 'icon': Icons.remove_circle},
+      {'text': 'Assessment', 'icon': Icons.assessment},
       {'text': 'Claims', 'icon': Icons.report},
     ];
 
@@ -31,8 +34,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          // Animated circles in the background
-          AnimatedCircles(),
+          // Animated triangles in the background
+          AnimatedTriangles(),
           // Column for logo, text, and boxes
           Column(
             children: [
@@ -66,37 +69,56 @@ class _HomePageState extends State<HomePage> {
                     crossAxisSpacing: 20.0,
                     mainAxisSpacing: 20.0,
                     children: List.generate(boxItems.length, (index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.7), // Decreased opacity
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.green.withOpacity(0.5), // Slightly darker shadow
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                boxItems[index]['icon'] as IconData,
-                                color: Colors.white,
-                                size: 40,
+                      return GestureDetector(
+                        onTap: () {
+                          if (boxItems[index]['text'] == 'Claims') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ReclamationsScreen(),
                               ),
-                              const SizedBox(height: 10),
-                              Text(
-                                boxItems[index]['text'] as String,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            );
+                          } else if (boxItems[index]['text'] == 'Absence') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AbsencePage(),
+                              ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5), // Decreased opacity
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.5), // Slightly darker shadow
+                                spreadRadius: 2,
+                                blurRadius: 5,
                               ),
                             ],
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  boxItems[index]['icon'] as IconData,
+                                  color: Colors.white,
+                                  size: 40,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  boxItems[index]['text'] as String,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -117,13 +139,13 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// AnimatedCircles widget to create a moving circles effect
-class AnimatedCircles extends StatefulWidget {
+// AnimatedTriangles widget to create a moving triangles effect
+class AnimatedTriangles extends StatefulWidget {
   @override
-  _AnimatedCirclesState createState() => _AnimatedCirclesState();
+  _AnimatedTrianglesState createState() => _AnimatedTrianglesState();
 }
 
-class _AnimatedCirclesState extends State<AnimatedCircles> with SingleTickerProviderStateMixin {
+class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -150,13 +172,9 @@ class _AnimatedCirclesState extends State<AnimatedCircles> with SingleTickerProv
                 top: (index % 2 == 0) ? 0 : 50,
                 child: Opacity(
                   opacity: 0.5,
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      shape: BoxShape.circle,
-                    ),
+                  child: CustomPaint(
+                    size: Size(100, 100), // Size of the triangle
+                    painter: TrianglePainter(),
                   ),
                 ),
               );
@@ -172,4 +190,25 @@ class _AnimatedCirclesState extends State<AnimatedCircles> with SingleTickerProv
     _controller.dispose();
     super.dispose();
   }
+}
+
+// Custom painter to draw triangles
+class TrianglePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.white.withOpacity(0.3) // Triangle color
+      ..style = PaintingStyle.fill;
+
+    final Path path = Path()
+      ..moveTo(size.width / 2, 0)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
