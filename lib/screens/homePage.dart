@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
       {'text': 'Class Notebook', 'icon': Icons.book},
       {'text': 'Absence', 'icon': Icons.remove_circle},
       {'text': 'Assessment', 'icon': Icons.assessment},
-      {'text': 'Claims', 'icon': Icons.report},
+      {'text': 'Reclamations', 'icon': Icons.report},
     ];
 
     return Scaffold(
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                     children: List.generate(boxItems.length, (index) {
                       return GestureDetector(
                         onTap: () {
-                          if (boxItems[index]['text'] == 'Claims') {
+                          if (boxItems[index]['text'] == 'Reclamations') {
                             Navigator.push(
                               context,
                               MaterialPageRoute(

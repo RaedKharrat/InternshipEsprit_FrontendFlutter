@@ -11,6 +11,8 @@ class AbsencePage extends StatefulWidget {
 class _AbsencePageState extends State<AbsencePage> {
   final _formKey = GlobalKey<FormState>();
   DateTime? _selectedDate;
+  List<String> observations = List.generate(10, (index) => ""); // To store observations
+  List<bool> isPresent = List.generate(10, (index) => true); // To store presence status
 
   @override
   Widget build(BuildContext context) {
@@ -212,16 +214,54 @@ class _AbsencePageState extends State<AbsencePage> {
                             (states) => Colors.black.withOpacity(0.4)),
                         columns: const [
                           DataColumn(label: Text('Index', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Classe', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Module', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Séance', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
-                          DataColumn(label: Text('Date', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('ID Etudiant', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Absence', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Presence', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                          DataColumn(label: Text('Observation', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
                         ],
                         rows: List.generate(10, (index) {
                           return DataRow(
-                            cells: List.generate(5, (colIndex) {
-                              return DataCell(Text(' ${index + 1}', style: const TextStyle(color: Colors.white)));
-                            }),
+                            cells: [
+                              DataCell(Text('${index + 1}', style: const TextStyle(color: Colors.white))),
+                              DataCell(Text('ID ${index + 1}', style: const TextStyle(color: Colors.white))),
+                              DataCell(
+                                RadioListTile<bool>(
+                                  value: false,
+                                  groupValue: isPresent[index],
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isPresent[index] = value!;
+                                    });
+                                  },
+                                  title: const Text('', style: TextStyle(color: Colors.white)),
+                                ),
+                              ),
+                              DataCell(
+                                RadioListTile<bool>(
+                                  value: true,
+                                  groupValue: isPresent[index],
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isPresent[index] = value!;
+                                    });
+                                  },
+                                  title: const Text('', style: TextStyle(color: Colors.white)),
+                                ),
+                              ),
+                              DataCell(
+                                GestureDetector(
+                                  onTap: () async {
+                                    final observation = await _showObservationDialog(index);
+                                    if (observation != null) {
+                                      setState(() {
+                                        observations[index] = observation;
+                                      });
+                                    }
+                                  },
+                                  child: Text(observations[index].isEmpty ? 'Tap to add' : observations[index], style: const TextStyle(color: Colors.white)),
+                                ),
+                              ),
+                            ],
                           );
                         }),
                       ),
@@ -233,6 +273,38 @@ class _AbsencePageState extends State<AbsencePage> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<String?> _showObservationDialog(int index) async {
+    String? observation;
+    return await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Observation for your student'),
+          content: TextField(
+            onChanged: (value) {
+              observation = value;
+            },
+            decoration: const InputDecoration(hintText: "Observation"),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop(observation);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
