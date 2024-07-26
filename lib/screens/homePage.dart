@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import '../screens/reclamations.dart'; // Correct the import path
 import '../screens/absence_page.dart'; // Import the AbsencePage
+import '../screens/emplois.dart'; // Import the EmploisPage
 import '../widgets/toolbar.dart'; // Ensure you import the custom toolbar
 
 class HomePage extends StatefulWidget {
@@ -20,6 +22,15 @@ class _HomePageState extends State<HomePage> {
       {'text': 'Absence', 'icon': Icons.remove_circle},
       {'text': 'Reclamations', 'icon': Icons.report},
       {'text': 'Evaluations', 'icon': Icons.assessment},
+    ];
+
+    // List of colors for the borders
+    final List<Color> borderColors = [
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
     ];
 
     return Scaffold(
@@ -60,80 +71,98 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              // Expanded grid view to fill the remaining space
+              // Expanded carousel slider to fill the remaining space
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 20.0,
-                          mainAxisSpacing: 20.0,
-                          children: List.generate(boxItems.length, (index) {
-                            return GestureDetector(
-                              onTap: () {
-                                if (boxItems[index]['text'] == 'Reclamations') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const ReclamationsScreen(),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      height: 300.0, // Adjust height as needed
+                      enlargeCenterPage: true,
+                      autoPlay: true,
+                      autoPlayInterval: const Duration(seconds: 3),
+                      aspectRatio: 2.0,
+                      viewportFraction: 0.6, // Adjust to decrease the gap
+                    ),
+                    items: boxItems.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      Map<String, dynamic> item = entry.value;
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return GestureDetector(
+                            onTap: () {
+                              if (item['text'] == 'Reclamations') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ReclamationsScreen(),
+                                  ),
+                                );
+                              } else if (item['text'] == 'Absence') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const AbsencePage(),
+                                  ),
+                                );
+                              } else if (item['text'] == 'Emplois du temps') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const EmploisPage(),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Container(
+                              width: 200, // Decrease width
+                              height: 200, // Decrease height
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5), // Decreased opacity
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: borderColors[index % borderColors.length], // Change border color
+                                  width: 3,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5), // Slightly darker shadow
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      item['icon'] as IconData,
+                                      color: Colors.white,
+                                      size: 40,
                                     ),
-                                  );
-                                } else if (boxItems[index]['text'] == 'Absence') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const AbsencePage(),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5), // Decreased opacity
-                                  borderRadius: BorderRadius.circular(15),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.5), // Slightly darker shadow
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      item['text'] as String,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        boxItems[index]['icon'] as IconData,
-                                        color: Colors.white,
-                                        size: 40,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        boxItems[index]['text'] as String,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               ),
-                            );
-                          }),
-                        ),
-                      ),
-                      // Spacer to add space between the grid and the toolbar
-                      const SizedBox(height: 80.0), // Adjust height as needed
-                    ],
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
+              // Spacer to add space between the grid and the toolbar
+              const SizedBox(height: 80.0), // Adjust height as needed
             ],
           ),
           // Toolbar at the bottom
@@ -181,7 +210,7 @@ class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTicker
                 child: Opacity(
                   opacity: 0.5,
                   child: CustomPaint(
-                    size: Size(100, 100), // Size of the triangle
+                    size: const Size(100, 100), // Size of the triangle
                     painter: TrianglePainter(),
                   ),
                 ),

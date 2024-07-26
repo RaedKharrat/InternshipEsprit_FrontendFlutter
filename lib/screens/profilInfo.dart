@@ -100,6 +100,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   ),
                 ),
               ),
+              
               Expanded(
                 child: Center(
                   child: AnimatedSwitcher(
