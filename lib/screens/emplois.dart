@@ -19,14 +19,10 @@ class _EmploisPageState extends State<EmploisPage> {
       'semestre': 'Semestre ${index + 1}',
       'charge_p1': 'Charge P1 ${index + 1}',
       'charge_p2': 'Charge P2 ${index + 1}',
-      'cc': '',
-      'tp': '',
+      'cc': '0',
+      'tp': '0',
     },
   );
-
-  // To keep track of selected radio button for CC and TP
-  String? _selectedCC;
-  String? _selectedTP;
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +53,9 @@ class _EmploisPageState extends State<EmploisPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 40), // Adjust top padding as needed
-                  Text(
+                  const Text(
                     'Votre charge horraire :',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -129,39 +125,20 @@ class _EmploisPageState extends State<EmploisPage> {
   }
 
   Widget _buildRadioButton(int index, String type) {
-    return Row(
-      children: [
-        Radio<String>(
-          value: '1',
-          groupValue: type == 'cc' ? _data[index]['cc'] : _data[index]['tp'],
-          onChanged: (value) {
-            setState(() {
-              if (type == 'cc') {
-                _data[index]['cc'] = value!;
-              } else {
-                _data[index]['tp'] = value!;
-              }
-            });
-          },
-          activeColor: Colors.white,
-          fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
-        ),
-        Radio<String>(
-          value: '2',
-          groupValue: type == 'cc' ? _data[index]['cc'] : _data[index]['tp'],
-          onChanged: (value) {
-            setState(() {
-              if (type == 'cc') {
-                _data[index]['cc'] = value!;
-              } else {
-                _data[index]['tp'] = value!;
-              }
-            });
-          },
-          activeColor: Colors.white,
-          fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
-        ),
-      ],
+    return Radio<String>(
+      value: '1',
+      groupValue: type == 'cc' ? _data[index]['cc'] : _data[index]['tp'],
+      onChanged: (value) {
+        setState(() {
+          if (type == 'cc') {
+            _data[index]['cc'] = value!;
+          } else {
+            _data[index]['tp'] = value!;
+          }
+        });
+      },
+      activeColor: Colors.white,
+      fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
     );
   }
 
