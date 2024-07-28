@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../screens/reclamations.dart'; // Correct the import path
 import '../screens/absence_page.dart'; // Import the AbsencePage
 import '../screens/emplois.dart'; // Import the EmploisPage
+import '../screens/CahierdeclassForm.dart'; // Import the CahierdeclassForm
 import '../widgets/toolbar.dart'; // Ensure you import the custom toolbar
 
 class HomePage extends StatefulWidget {
@@ -110,6 +111,13 @@ class _HomePageState extends State<HomePage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => const EmploisPage(),
+                                  ),
+                                );
+                              } else if (item['text'] == 'Cahier de classe') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CahierdeclassForm(),
                                   ),
                                 );
                               }
