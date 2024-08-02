@@ -9,7 +9,6 @@ class EmploisPage extends StatefulWidget {
 }
 
 class _EmploisPageState extends State<EmploisPage> {
-  // This holds the selected value for each row
   final List<Map<String, String>> _data = List.generate(
     10,
     (index) => {
@@ -36,23 +35,21 @@ class _EmploisPageState extends State<EmploisPage> {
       ),
       body: Stack(
         children: [
-          // Background image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/bg1.png'), // Update the path if necessary
-                fit: BoxFit.cover, // Adjust as needed
+                image: AssetImage('assets/bg1.png'),
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          // Content
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 40), // Adjust top padding as needed
+                  const SizedBox(height: 40),
                   const Text(
                     'Votre charge horraire :',
                     style: TextStyle(
@@ -105,13 +102,13 @@ class _EmploisPageState extends State<EmploisPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildCircularChart('Total P1', 0.7),
-                          _buildCircularChart('Total P2', 0.5),
+                          _buildChartContainer('Total P1', 0.7),
+                          _buildChartContainer('Total P2', 0.5),
                         ],
                       ),
                       const SizedBox(height: 20),
                       Center(
-                        child: _buildTotalCircularChart('Total Periods', 0.9),
+                        child: _buildChartContainer('Total Periods', 0.9, isTotal: true),
                       ),
                     ],
                   ),
@@ -142,59 +139,50 @@ class _EmploisPageState extends State<EmploisPage> {
     );
   }
 
-  Widget _buildCircularChart(String title, double percentage) {
-    return Column(
-      children: [
-        CircularPercentIndicator(
-          radius: 60.0,
-          lineWidth: 10.0,
-          percent: percentage,
-          center: Text('${(percentage * 100).toInt()}%'),
-          progressColor: Colors.green,
-          backgroundColor: Colors.white,
-          circularStrokeCap: CircularStrokeCap.round,
-        ),
-        const SizedBox(height: 10),
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+  Widget _buildChartContainer(String title, double percentage, {bool isTotal = false}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTotalCircularChart(String title, double percentage) {
-    return Column(
-      children: [
-        CircularPercentIndicator(
-          radius: 80.0,
-          lineWidth: 15.0,
-          percent: percentage,
-          center: Text(
-            '${(percentage * 100).toInt()}%',
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          CircularPercentIndicator(
+            radius: isTotal ? 80.0 : 60.0,
+            lineWidth: isTotal ? 15.0 : 10.0,
+            percent: percentage,
+            center: Text(
+              '${(percentage * 100).toInt()}%',
+              style: TextStyle(
+                fontSize: isTotal ? 20 : 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            progressColor: isTotal ? Colors.blue : Colors.green,
+            backgroundColor: Colors.white,
+            circularStrokeCap: CircularStrokeCap.round,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            title,
             style: const TextStyle(
-              fontSize: 20,
+              color: Colors.white,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          progressColor: Colors.blue,
-          backgroundColor: Colors.white,
-          circularStrokeCap: CircularStrokeCap.round,
-        ),
-        const SizedBox(height: 10),
-        Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

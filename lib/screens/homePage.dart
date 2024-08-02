@@ -3,8 +3,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../screens/reclamations.dart'; // Correct the import path
 import '../screens/absence_page.dart'; // Import the AbsencePage
 import '../screens/emplois.dart'; // Import the EmploisPage
-import '../screens/CahierdeclassForm.dart'; // Import the CahierdeclassForm
+import '../screens/displayCahierClass.dart'; // Import the CahierdeclassForm
+import '../screens/evaluationsChart.dart'; // Import the CahierdeclassForm
 import '../widgets/toolbar.dart'; // Ensure you import the custom toolbar
+import '../widgets/header.dart'; // Import the HeaderBar
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,7 +18,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    // List of text and corresponding icons for each box
     final List<Map<String, dynamic>> boxItems = [
       {'text': 'Emplois du temps', 'icon': Icons.calendar_today},
       {'text': 'Cahier de classe', 'icon': Icons.book},
@@ -25,7 +26,6 @@ class _HomePageState extends State<HomePage> {
       {'text': 'Evaluations', 'icon': Icons.assessment},
     ];
 
-    // List of colors for the borders
     final List<Color> borderColors = [
       Colors.red,
       Colors.blue,
@@ -35,30 +35,27 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
+      appBar: const HeaderBar(),
       body: Stack(
         children: [
-          // Background image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/bg1.png'), // Update the path if necessary
-                fit: BoxFit.cover, // Adjust as needed
+                image: AssetImage('assets/bg1.png'),
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          // Animated triangles in the background
           AnimatedTriangles(),
-          // Column for logo, text, and boxes
           Column(
             children: [
-              // Logo and text at the top
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
                     Image.asset(
-                      'assets/logoEsprit copy.png', // Update with the correct path
-                      height: 60, // Adjust the height as needed
+                      'assets/logoEsprit copy.png',
+                      height: 60,
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -72,18 +69,17 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              // Expanded carousel slider to fill the remaining space
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: CarouselSlider(
                     options: CarouselOptions(
-                      height: 300.0, // Adjust height as needed
+                      height: 300.0,
                       enlargeCenterPage: true,
                       autoPlay: true,
                       autoPlayInterval: const Duration(seconds: 3),
                       aspectRatio: 2.0,
-                      viewportFraction: 0.6, // Adjust to decrease the gap
+                      viewportFraction: 0.6,
                     ),
                     items: boxItems.asMap().entries.map((entry) {
                       int index = entry.key;
@@ -117,24 +113,31 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const CahierdeclassForm(),
+                                    builder: (context) => DisplayCahierClass(),
+                                  ),
+                                );
+                              } else if (item['text'] == 'Evaluations') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const EvaluationsChart(),
                                   ),
                                 );
                               }
                             },
                             child: Container(
-                              width: 200, // Decrease width
-                              height: 200, // Decrease height
+                              width: 200,
+                              height: 200,
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5), // Decreased opacity
+                                color: Colors.black.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(15),
                                 border: Border.all(
-                                  color: borderColors[index % borderColors.length], // Change border color
+                                  color: borderColors[index % borderColors.length],
                                   width: 3,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.5), // Slightly darker shadow
+                                    color: Colors.black.withOpacity(0.5),
                                     spreadRadius: 2,
                                     blurRadius: 5,
                                   ),
@@ -169,14 +172,12 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              // Spacer to add space between the grid and the toolbar
-              const SizedBox(height: 80.0), // Adjust height as needed
+              const SizedBox(height: 80.0),
             ],
           ),
-          // Toolbar at the bottom
           const Align(
             alignment: Alignment.bottomCenter,
-            child: CustomToolbar(), // Add your toolbar here
+            child: CustomToolbar(),
           ),
         ],
       ),
@@ -184,7 +185,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// AnimatedTriangles widget to create a moving triangles effect
 class AnimatedTriangles extends StatefulWidget {
   @override
   _AnimatedTrianglesState createState() => _AnimatedTrianglesState();
@@ -218,7 +218,7 @@ class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTicker
                 child: Opacity(
                   opacity: 0.5,
                   child: CustomPaint(
-                    size: const Size(100, 100), // Size of the triangle
+                    size: const Size(100, 100),
                     painter: TrianglePainter(),
                   ),
                 ),
@@ -237,12 +237,11 @@ class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTicker
   }
 }
 
-// Custom painter to draw triangles
 class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = Colors.white.withOpacity(0.3) // Triangle color
+      ..color = Colors.white.withOpacity(0.3)
       ..style = PaintingStyle.fill;
 
     final Path path = Path()
