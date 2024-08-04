@@ -23,44 +23,20 @@ class EvaluationsChart extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildChoiceSelectors(),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 16.0),
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'La charge de travail en heures associée au cours',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 16.0),
-                    SizedBox(
-                      height: 300,
-                      child: BarChart(
-                        BarChartData(
-                          barGroups: _createSampleBarData(),
-                          borderData: FlBorderData(show: false),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _buildPieChartContainer('La présentation du cours', 0.7, 0.3),
-              _buildPieChartContainer('La pédagogie adoptée', 0.8, 0.2),
-              _buildPieChartContainer('L\'adaptation des activités d\'apprentissage aux objectifs des cours', 0.6, 0.4),
-              _buildPieChartContainer('Atteinte des acquis d\'apprentissage', 0.9, 0.1),
-            ],
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final double containerWidth = constraints.maxWidth * 0.9; // 90% of available width
+              return Column(
+                children: [
+                  _buildChoiceSelectors(),
+                  _buildBarChartContainer(containerWidth),
+                  _buildPieChartContainer('La présentation du cours', 0.7, 0.3, containerWidth),
+                  _buildPieChartContainer('La pédagogie adoptée', 0.8, 0.2, containerWidth),
+                  _buildPieChartContainer('L\'adaptation des activités d\'apprentissage aux objectifs des cours', 0.6, 0.4, containerWidth),
+                  _buildPieChartContainer('Atteinte des acquis d\'apprentissage', 0.9, 0.1, containerWidth),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -141,29 +117,43 @@ class EvaluationsChart extends StatelessWidget {
     );
   }
 
-  List<BarChartGroupData> _createSampleBarData() {
-    final data = [
-      BarChartModel('Cours 1', 5),
-      BarChartModel('Cours 2', 7),
-      BarChartModel('Cours 3', 6),
-      BarChartModel('Cours 4', 8),
-    ];
-
-    return data.map((BarChartModel eval) {
-      return BarChartGroupData(
-        x: data.indexOf(eval),
-        barRods: [
-          BarChartRodData(
-            y: eval.charge.toDouble(),
-            colors: [Colors.blue],
-          )
+  Widget _buildBarChartContainer(double width) {
+    return Container(
+      width: width,
+      margin: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'La charge de travail en heures associée au cours',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 16.0),
+          SizedBox(
+            height: 300,
+            child: BarChart(
+              BarChartData(
+                barGroups: _createSampleBarData(),
+                borderData: FlBorderData(show: false),
+              ),
+            ),
+          ),
         ],
-      );
-    }).toList();
+      ),
+    );
   }
 
-  Widget _buildPieChartContainer(String title, double satisfied, double notSatisfied) {
+  Widget _buildPieChartContainer(String title, double satisfied, double notSatisfied, double width) {
     return Container(
+      width: width,
       margin: EdgeInsets.symmetric(vertical: 16.0),
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -207,6 +197,27 @@ class EvaluationsChart extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<BarChartGroupData> _createSampleBarData() {
+    final data = [
+      BarChartModel('Cours 1', 5),
+      BarChartModel('Cours 2', 7),
+      BarChartModel('Cours 3', 6),
+      BarChartModel('Cours 4', 8),
+    ];
+
+    return data.map((BarChartModel eval) {
+      return BarChartGroupData(
+        x: data.indexOf(eval),
+        barRods: [
+          BarChartRodData(
+            y: eval.charge.toDouble(),
+            colors: [Colors.blue],
+          )
+        ],
+      );
+    }).toList();
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'cahierdeclassForm.dart'; // Import the form page
+import 'cahierdeclassForm.dart';
+import 'detailsCahierClass.dart';
 
 class DisplayCahierClass extends StatelessWidget {
   // Sample records data
@@ -85,6 +86,34 @@ class DisplayCahierClass extends StatelessWidget {
                           _buildRecordDetail('Contenu Traité', record['areaField1']),
                           const SizedBox(height: 10),
                           _buildRecordDetail('Remarque', record['areaField2']),
+                          const SizedBox(height: 10),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailsCahierClass(record: record),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.red[900], // Button color
+                                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Show',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
