@@ -4,7 +4,7 @@ import '../screens/reclamations.dart'; // Correct the import path
 import '../screens/absence_page.dart'; // Import the AbsencePage
 import '../screens/emplois.dart'; // Import the EmploisPage
 import '../screens/displayCahierClass.dart'; // Import the CahierdeclassForm
-import '../screens/evaluationsChart.dart'; // Import the CahierdeclassForm
+import '../screens/evaluationsChart.dart'; // Import the EvaluationsChart
 import '../widgets/toolbar.dart'; // Ensure you import the custom toolbar
 import '../widgets/header.dart'; // Import the HeaderBar
 
@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      appBar: const HeaderBar(),
+      //appBar: const HeaderBar(),
       body: Stack(
         children: [
           Container(
@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const EvaluationsChart(),
+                                    builder: (context) => EvaluationsChart(),
                                   ),
                                 );
                               }

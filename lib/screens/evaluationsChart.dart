@@ -1,104 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class EvaluationsChart extends StatelessWidget {
-  const EvaluationsChart({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Évaluations Chart',
+        title: Text(
+          'Evaluations Chart',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.red[900],
+        backgroundColor: Colors.red,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/bg1.png'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildBarChart(),
-                const SizedBox(height: 20),
-                _buildPieChart('La présentation du cours'),
-                const SizedBox(height: 20),
-                _buildPieChart('La pédagogie adoptée'),
-                const SizedBox(height: 20),
-                _buildPieChart('L\'adaptation des activités d\'apprentissage aux objectifs des cours'),
-                const SizedBox(height: 20),
-                _buildPieChart('Atteinte des acquis d\'apprentissage'),
-              ],
-            ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              _buildChoiceSelectors(),
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 16.0),
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'La charge de travail en heures associée au cours',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 16.0),
+                    SizedBox(
+                      height: 300,
+                      child: BarChart(
+                        BarChartData(
+                          barGroups: _createSampleBarData(),
+                          borderData: FlBorderData(show: false),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _buildPieChartContainer('La présentation du cours', 0.7, 0.3),
+              _buildPieChartContainer('La pédagogie adoptée', 0.8, 0.2),
+              _buildPieChartContainer('L\'adaptation des activités d\'apprentissage aux objectifs des cours', 0.6, 0.4),
+              _buildPieChartContainer('Atteinte des acquis d\'apprentissage', 0.9, 0.1),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBarChart() {
+  Widget _buildChoiceSelectors() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      margin: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(15.0),
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'La charge de travail en heures associée au cours',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+          _buildDropdown('Semestre', ['Semestre 1', 'Semestre 2']),
+          SizedBox(height: 8.0),
+          _buildDropdown('Classe', ['Classe 1', 'Classe 2', 'Classe 3']),
+          SizedBox(height: 8.0),
+          _buildDropdown('Matière', ['Matière 1', 'Matière 2', 'Matière 3']),
+          SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () {
+              // Implement the submit action here
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red, // Button color
+              padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 300,
-            child: BarChart(
-              BarChartData(
-                gridData: FlGridData(show: false),
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false), // Adjust as needed
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false), // Adjust as needed
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                barGroups: [
-                  BarChartGroupData(
-                    x: 0,
-                    barRods: [
-                      BarChartRodData(
-                        fromY: 0,
-                        toY: 10,
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-                  BarChartGroupData(
-                    x: 1,
-                    barRods: [
-                      BarChartRodData(
-                        fromY: 0,
-                        toY: 20,
-                        color: Colors.red,
-                      ),
-                    ],
-                  ),
-                ],
+            child: Text(
+              'Submit',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
           ),
@@ -107,52 +108,111 @@ class EvaluationsChart extends StatelessWidget {
     );
   }
 
-  Widget _buildPieChart(String title) {
+  Widget _buildDropdown(String title, List<String> options) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        DropdownButton<String>(
+          value: options[0],
+          icon: Icon(Icons.arrow_downward),
+          iconSize: 24,
+          elevation: 16,
+          style: TextStyle(color: Colors.black),
+          underline: Container(
+            height: 2,
+            color: Colors.red,
+          ),
+          onChanged: (String? newValue) {},
+          items: options.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  List<BarChartGroupData> _createSampleBarData() {
+    final data = [
+      BarChartModel('Cours 1', 5),
+      BarChartModel('Cours 2', 7),
+      BarChartModel('Cours 3', 6),
+      BarChartModel('Cours 4', 8),
+    ];
+
+    return data.map((BarChartModel eval) {
+      return BarChartGroupData(
+        x: data.indexOf(eval),
+        barRods: [
+          BarChartRodData(
+            y: eval.charge.toDouble(),
+            colors: [Colors.blue],
+          )
+        ],
+      );
+    }).toList();
+  }
+
+  Widget _buildPieChartContainer(String title, double satisfied, double notSatisfied) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      margin: EdgeInsets.symmetric(vertical: 16.0),
+      padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(15.0),
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 16.0),
           SizedBox(
             height: 200,
-            child: PieChart(
-              PieChartData(
-                sections: [
-                  PieChartSectionData(
-                    value: 70, // Adjust the value as needed
-                    color: Colors.green,
-                    title: 'Satisfait',
-                    radius: 60,
-                    titleStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  PieChartSectionData(
-                    value: 30, // Adjust the value as needed
-                    color: Colors.red,
-                    title: 'Non Satisfait',
-                    radius: 60,
-                    titleStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
-                borderData: FlBorderData(show: false),
-                centerSpaceRadius: 40, // Adjust if needed
+            child: CircularPercentIndicator(
+              radius: 100.0,
+              lineWidth: 20.0,
+              percent: satisfied,
+              center: Text(
+                '${(satisfied * 100).toStringAsFixed(1)}%',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              progressColor: Colors.red,
+              backgroundColor: Colors.grey,
+              circularStrokeCap: CircularStrokeCap.round,
             ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Satisfait: ${(satisfied * 100).toStringAsFixed(1)}% / Non Satisfait: ${(notSatisfied * 100).toStringAsFixed(1)}%',
+            style: TextStyle(fontSize: 16),
           ),
         ],
       ),
     );
   }
+}
+
+class BarChartModel {
+  final String cours;
+  final int charge;
+
+  BarChartModel(this.cours, this.charge);
 }
