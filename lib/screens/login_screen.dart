@@ -12,9 +12,10 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   int selectedIndex = 0;
   bool showOption = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -212,24 +213,38 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                         const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const HomePage()),
-                            );
-                          },
-                          child: Container(
-                            height: 40,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
+                        AnimatedScale(
+                          scale: _isPressed ? 0.95 : 1.0,
+                          duration: const Duration(milliseconds: 100),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isPressed = true;
+                              });
+                              Future.delayed(const Duration(milliseconds: 100), () {
+                                setState(() {
+                                  _isPressed = false;
+                                });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const HomePage()),
+                                );
+                              });
+                            },
+                            child: Container(
+                              height: 40,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(30)),
-                            alignment: Alignment.center,
-                            child: TextUtil(
-                              text: "Log In",
-                              color: Colors.black,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              alignment: Alignment.center,
+                              child: TextUtil(
+                                text: "Log In",
+                                color: Colors.black,
+                              ),
                             ),
+                            splashColor: Colors.black.withOpacity(0.2), // Ripple effect color
                           ),
                         ),
                         const Spacer(),

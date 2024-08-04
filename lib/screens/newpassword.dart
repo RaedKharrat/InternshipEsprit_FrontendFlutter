@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../data/bg_data.dart'; // Ensure bgList is defined here
 import '../utils/text_utils.dart'; // Ensure TextUtil is defined here
+import 'login_screen.dart'; // Import your LoginScreen
 
 class NewPasswordScreen extends StatefulWidget {
   const NewPasswordScreen({super.key});
@@ -102,6 +103,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               ),
             ),
           ),
+          // Animated triangles in the background
           AnimatedTriangles(),
           Align(
             alignment: Alignment.topCenter,
@@ -139,7 +141,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           size: 30,
                         ),
                         const SizedBox(height: 15),
-                        
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
@@ -168,7 +169,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           ),
                         ),
                         const SizedBox(height: 15),
-                        
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
@@ -199,7 +199,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/login');
+                            Navigator.pushNamed(context, '/homepage');
                           },
                           child: Container(
                             height: 40,
@@ -212,6 +212,27 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             child: TextUtil(
                               text: "Confirm",
                               color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 15), // Add space between buttons
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/login');
+                            },
+                            style: OutlinedButton.styleFrom(
+                              primary: Colors.white,
+                              side: BorderSide(color: Colors.white),
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: TextUtil(
+                              text: "Back to Login",
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -281,7 +302,6 @@ class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTicker
   }
 }
 
-// Custom painter to draw triangles
 class TrianglePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

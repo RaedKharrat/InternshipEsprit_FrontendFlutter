@@ -16,6 +16,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = -1;
+  bool _isPressed = false;
+
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> boxItems = [
@@ -88,80 +91,97 @@ class _HomePageState extends State<HomePage> {
                         builder: (BuildContext context) {
                           return GestureDetector(
                             onTap: () {
-                              if (item['text'] == 'Reclamations') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const ReclamationsScreen(),
-                                  ),
-                                );
-                              } else if (item['text'] == 'Absence') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const AbsencePage(),
-                                  ),
-                                );
-                              } else if (item['text'] == 'Emplois du temps') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const EmploisPage(),
-                                  ),
-                                );
-                              } else if (item['text'] == 'Cahier de classe') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DisplayCahierClass(),
-                                  ),
-                                );
-                              } else if (item['text'] == 'Evaluations') {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EvaluationsChart(),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Container(
-                              width: 200,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  color: borderColors[index % borderColors.length],
-                                  width: 3,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      item['icon'] as IconData,
-                                      color: Colors.white,
-                                      size: 40,
+                              setState(() {
+                                _selectedIndex = index;
+                                _isPressed = true;
+                              });
+                              Future.delayed(const Duration(milliseconds: 200), () {
+                                setState(() {
+                                  _isPressed = false;
+                                });
+                                // Navigate to the respective page based on item['text']
+                                if (item['text'] == 'Reclamations') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ReclamationsScreen(),
                                     ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      item['text'] as String,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  );
+                                } else if (item['text'] == 'Absence') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AbsencePage(),
+                                    ),
+                                  );
+                                } else if (item['text'] == 'Emplois du temps') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const EmploisPage(),
+                                    ),
+                                  );
+                                } else if (item['text'] == 'Cahier de classe') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DisplayCahierClass(),
+                                    ),
+                                  );
+                                } else if (item['text'] == 'Evaluations') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EvaluationsChart(),
+                                    ),
+                                  );
+                                }
+                              });
+                            },
+                            child: AnimatedScale(
+                              scale: _selectedIndex == index && _isPressed ? 0.95 : 1.0,
+                              duration: const Duration(milliseconds: 200),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                width: _selectedIndex == index && _isPressed ? 220 : 200,
+                                height: _selectedIndex == index && _isPressed ? 220 : 200,
+                                decoration: BoxDecoration(
+                                  color: _selectedIndex == index && _isPressed
+                                      ? Colors.red.withOpacity(0.7)
+                                      : Colors.black.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(15),
+                                  border: Border.all(
+                                    color: borderColors[index % borderColors.length],
+                                    width: 3,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
                                     ),
                                   ],
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        item['icon'] as IconData,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        item['text'] as String,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

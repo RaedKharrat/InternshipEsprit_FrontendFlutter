@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: const LoginScreen(),
       routes: {
+        '/login': (context) => const LoginScreen(),
         '/forgetpassword': (context) => const ForgetPasswordScreen(),
         '/verifyOTP': (context) => const VerifyCodefpScreen(), 
         '/changepwd': (context) => const NewPasswordScreen(),
