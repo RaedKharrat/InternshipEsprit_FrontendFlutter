@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/bg1.png'), // Background image
+                image: AssetImage('assets/bg111.png'), // Background image
                 fit: BoxFit.cover,
               ),
             ),
@@ -93,11 +93,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, bottom: 10.0), // Reduced bottom padding
                 child: Center(
-                  child: Image.asset(
-                    'assets/logoEsprit copy.png', // Replace with your logo image path
-                    width: 170, // Adjust as needed
-                    height: 60, // Adjust as needed
-                  ),
+                  
                 ),
               ),
               

@@ -1,38 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
-  const HeaderBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipPath(
-      clipper: HalfCircleClipper(),
-      child: Container(
-        color: Colors.grey,
-        height: preferredSize.height,
-        child: Center(
-          child: CustomPaint(
-            size: const Size(70, 70), // Increase the size for better visibility
-            painter: CircleWithTrianglePainter(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(60.0);
-}
-
 class HalfCircleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    final path = Path();
+    Path path = Path();
     path.lineTo(0, size.height);
-    path.arcToPoint(
-      Offset(size.width, size.height),
-      radius: Radius.circular(size.width / 2),
-      clockwise: false,
+    path.quadraticBezierTo(
+      size.width / 2, size.height * 2, 
+      size.width, size.height
     );
     path.lineTo(size.width, 0);
     path.close();
@@ -40,51 +15,89 @@ class HalfCircleClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
 }
 
-class CircleWithTrianglePainter extends CustomPainter {
+class HalfCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final circlePaint = Paint()
-      ..color = Colors.grey
-      ..style = PaintingStyle.fill
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 4.0); // Add shadow
-
-    // Draw circle with full opacity
-    final circleCenter = Offset(size.width / 2, size.height / 2);
-    final circleRadius = size.width / 2;
-    canvas.drawCircle(circleCenter, circleRadius, circlePaint);
-
-    final trianglePaint = Paint()
-      ..color = Colors.red
+    Paint paint = Paint()
+      ..color = Colors.black
       ..style = PaintingStyle.fill;
 
-    // Create a path for the triangle and rotate it 90 degrees
-    final path = Path()
-      ..moveTo(size.width / 2, size.height / 6) // Adjust position for better appearance
-      ..lineTo(size.width * 2 / 3, size.height * 2 / 3)
-      ..lineTo(size.width / 3, size.height * 2 / 3)
-      ..close();
+    Path path = Path();
+    path.lineTo(0, size.height);
+    path.quadraticBezierTo(
+      size.width / 2, size.height * 2, 
+      size.width, size.height
+    );
+    path.lineTo(size.width, 0);
+    path.close();
 
-    // Translate and rotate canvas to rotate the triangle
-    canvas.save();
-    canvas.translate(size.width / 2, size.height / 2);
-    canvas.rotate(90 * 3.1415927 / 180); // Rotate 90 degrees
-    canvas.translate(-size.width / 2, -size.height / 2);
+    // Draw the filled path
+    canvas.drawPath(path, paint);
 
-    // Draw the rotated triangle
-    canvas.drawPath(path, trianglePaint);
-    canvas.restore();
+    // Draw the white border
+    Paint borderPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0;
 
-    // Add a stronger shadow for the circle
-    final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.5)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 4.0);
-
-    canvas.drawCircle(circleCenter.translate(3, 3), circleRadius, shadowPaint);
+    canvas.drawPath(path, borderPaint);
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+class HedhahouwaAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  final Size preferredSize;
+
+  HedhahouwaAppBar({Key? key}) 
+    : preferredSize = Size.fromHeight(200.0),
+      super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipPath(
+      clipper: HalfCircleClipper(),
+      child: CustomPaint(
+        painter: HalfCirclePainter(),
+        child: Container(
+          height: preferredSize.height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Teacher Space',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Hello Mr. John Doe 👋🏻',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22.0,
+                ),
+              ),
+              const SizedBox(height: 50),
+              CircleAvatar(
+                radius: 30.0,
+                backgroundImage: AssetImage('assets/avatar.jpg'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

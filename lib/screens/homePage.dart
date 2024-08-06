@@ -38,13 +38,13 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      //appBar: const HeaderBar(),
+     // appBar:  HedhahouwaAppBar(),
       body: Stack(
         children: [
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/bg1.png'),
+                image: AssetImage('assets/bg111.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -56,13 +56,10 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    Image.asset(
-                      'assets/logoEsprit copy.png',
-                      height: 60,
-                    ),
+                   
                     const SizedBox(height: 10),
                     Text(
-                      'Welcome to teachers space Mr. John Doe 👋🏻',
+                      '',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,

@@ -16,7 +16,6 @@ class DisplayCahierClass extends StatelessWidget {
       'areaField1': 'Content treated in this session...',
       'areaField2': 'Remarks about the session...',
     },
-    // Add more records as needed
   ];
 
   @override
