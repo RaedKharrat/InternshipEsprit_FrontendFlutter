@@ -53,19 +53,18 @@ class _HomePageState extends State<HomePage> {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(9.0),
                 child: Column(
                   children: [
-                   
-                    const SizedBox(height: 10),
                     Text(
-                      '',
+                      'Teachers Space',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.red,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
