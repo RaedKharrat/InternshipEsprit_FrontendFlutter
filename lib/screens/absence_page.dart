@@ -46,7 +46,7 @@ class _AbsencePageState extends State<AbsencePage> {
     child: Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white),
+        border: Border.all(color: Colors.red),
         borderRadius: BorderRadius.circular(15),
         color: Colors.black.withOpacity(0.4),
       ),

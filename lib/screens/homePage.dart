@@ -31,10 +31,10 @@ class _HomePageState extends State<HomePage> {
 
     final List<Color> borderColors = [
       Colors.red,
-      Colors.blue,
-      Colors.green,
       Colors.orange,
       Colors.purple,
+      Colors.blue,
+      Colors.grey,
     ];
 
     return Scaffold(
@@ -56,15 +56,25 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(9.0),
                 child: Column(
                   children: [
+                    
+                    const SizedBox(height: 5), // Adjust spacing if needed
+                    // Text(
+                    //   'Teachers Space',
+                    //   style: const TextStyle(
+                    //     color: Colors.red,
+                    //     fontSize: 24,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
+                    const SizedBox(height: 230),
                     Text(
-                      'Teachers Space',
+                      'Welcome back Mr. John Doe',
                       style: const TextStyle(
-                        color: Colors.red,
+                        color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 10),
                   ],
                 ),
               ),

@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             children: [
               // Logo at the top
               Padding(
-                padding: const EdgeInsets.only(top: 20.0, bottom: 10.0), // Reduced bottom padding
+                padding: const EdgeInsets.only(top: 100.0, bottom: 10.0), // Reduced bottom padding
                 child: Center(
                   
                 ),
@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           child: Container(
             key: ValueKey('profileContainer'),
             width: 300,
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.4), // Reduced opacity
               borderRadius: BorderRadius.circular(20),
