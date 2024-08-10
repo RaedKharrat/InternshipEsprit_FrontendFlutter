@@ -32,12 +32,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    // Navigate to Login Screen after a delay
     _navigateToLogin();
   }
 
   _navigateToLogin() async {
-    await Future.delayed(const Duration(seconds: 4), () {}); // Adjust duration if needed
+    await Future.delayed(const Duration(seconds: 4), () {}); 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -67,13 +66,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               // Animated CircularProgressIndicator
               Positioned(
                 child: Container(
-                  width: 200, // Same as diameter of the circle container
-                  height: 200, // Same as diameter of the circle container
+                  width: 200,
+                  height: 200, 
                   child: AnimatedBuilder(
                     animation: _controller,
                     builder: (context, child) {
                       return CircularProgressIndicator(
-                        strokeWidth: 25.0, // Thicker spinner
+                        strokeWidth: 25.0,
                         valueColor: AlwaysStoppedAnimation<Color>(_spinnerColorAnimation.value ?? Colors.red),
                       );
                     },
