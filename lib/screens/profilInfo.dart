@@ -84,12 +84,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               ),
             ),
           ),
-          // Animated triangles
           AnimatedTriangles(),
-          // Profile content container
           Column(
             children: [
-              // Logo at the top
               Padding(
                 padding: const EdgeInsets.only(top: 100.0, bottom: 10.0), // Reduced bottom padding
                 child: Center(

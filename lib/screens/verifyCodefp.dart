@@ -99,46 +99,49 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
                         ),
                         const SizedBox(height: 15),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(5, (index) {
-                            return Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              width: 50,
-                              child: TextFormField(
-                                controller: _otpControllers[index],
-                                focusNode: _otpFocusNodes[index],
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(color: Colors.white, fontSize: 24),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.red,
-                                  hintText: '_',
-                                  hintStyle: TextStyle(color: Colors.white70),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  counterText: '', // Hide the counter text
-                                ),
-                                maxLength: 1,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly,
-                                ],
-                                onChanged: (value) {
-                                  if (value.isNotEmpty) {
-                                    _focusNextField(index);
-                                  }
-                                },
-                                onEditingComplete: () {
-                                  if (_otpControllers[index].text.isEmpty) {
-                                    _focusPreviousField(index);
-                                  }
-                                },
-                              ),
-                            );
-                          }),
-                        ),
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: List.generate(5, (index) {
+    return Flexible(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 5),
+        width: 45, // Reduced width from 50 to 45
+        child: TextFormField(
+          controller: _otpControllers[index],
+          focusNode: _otpFocusNodes[index],
+          keyboardType: TextInputType.number,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.white, fontSize: 24),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.red,
+            hintText: '_',
+            hintStyle: TextStyle(color: Colors.white70),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            counterText: '', // Hide the counter text
+          ),
+          maxLength: 1,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+          ],
+          onChanged: (value) {
+            if (value.isNotEmpty) {
+              _focusNextField(index);
+            }
+          },
+          onEditingComplete: () {
+            if (_otpControllers[index].text.isEmpty) {
+              _focusPreviousField(index);
+            }
+          },
+        ),
+      ),
+    );
+  }),
+),
+
                         const SizedBox(height: 50), // Increased space between OTP fields and buttons
                         GestureDetector(
                           onTap: () {

@@ -29,7 +29,7 @@ class _CustomToolbarState extends State<CustomToolbar> {
         children: [
           _buildToolbarItem('home', Icons.home, 'Home', const HomePage()),
           _buildToolbarItem('profile', Icons.account_circle, 'Profile', const ProfilePage()),
-          _buildToolbarItem('settings', Icons.settings, 'Settings', null), // Replace 'null' with your settings page if any
+          _buildToolbarItem('credits', Icons.info, 'Credits', null), // New icon for credits
         ],
       ),
     );
@@ -40,7 +40,9 @@ class _CustomToolbarState extends State<CustomToolbar> {
     return GestureDetector(
       onTap: () {
         _setActiveItem(itemName);
-        if (page != null) {
+        if (itemName == 'credits') {
+          _showCreditsDialog(); // Show the credits popup
+        } else if (page != null) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => page),
@@ -63,6 +65,26 @@ class _CustomToolbarState extends State<CustomToolbar> {
               : Icon(icon, color: Colors.white),
         ),
       ),
+    );
+  }
+
+  void _showCreditsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Credits'),
+          content: const Text('Made by Raed Kharrat\nWith contributions from the Flutter community.\nAll copyrights are reserved to RK-Hub©'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
