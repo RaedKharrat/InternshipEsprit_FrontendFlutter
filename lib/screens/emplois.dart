@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class EmploisPage extends StatefulWidget {
   const EmploisPage({Key? key}) : super(key: key);
@@ -49,15 +48,36 @@ class _EmploisPageState extends State<EmploisPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 40),
-                  const Text(
-                    'Votre charge horraire :',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildInfoCard(
+                        icon: Icons.access_time,
+                        title: 'Semestre I',
+                        value: '50 hours',
+                        color: Colors.grey,
+                      ),
+                      _buildInfoCard(
+                        icon: Icons.access_time_filled,
+                        title: 'Semestre II',
+                        value: '80 hours',
+                        color: Colors.red,
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 40),
+                  Center(
+  child: const Text(
+    'Votre charge horaire',
+    style: TextStyle(
+      color: Colors.white,
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+),
+
                   const SizedBox(height: 20),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -95,23 +115,6 @@ class _EmploisPageState extends State<EmploisPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Circular charts
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildChartContainer('Total P1', 0.7),
-                          _buildChartContainer('Total P2', 0.5),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: _buildChartContainer('Total Periods', 0.9, isTotal: true),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -139,46 +142,47 @@ class _EmploisPageState extends State<EmploisPage> {
     );
   }
 
-  Widget _buildChartContainer(String title, double percentage, {bool isTotal = false}) {
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+  }) {
     return Container(
+      width: 160,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
+        color: color.withOpacity(0.7),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          CircularPercentIndicator(
-            radius: isTotal ? 80.0 : 60.0,
-            lineWidth: isTotal ? 15.0 : 10.0,
-            percent: percentage,
-            center: Text(
-              '${(percentage * 100).toInt()}%',
-              style: TextStyle(
-                fontSize: isTotal ? 20 : 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            progressColor: isTotal ? Colors.blue : Colors.green,
-            backgroundColor: Colors.white,
-            circularStrokeCap: CircularStrokeCap.round,
-          ),
+          Icon(icon, color: Colors.white, size: 40),
           const SizedBox(height: 10),
           Text(
             title,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
             ),
           ),
         ],

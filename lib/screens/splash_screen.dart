@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    _spinnerColorAnimation = ColorTween(begin: Colors.red, end: Colors.red).animate(
+    _spinnerColorAnimation = ColorTween(begin: Colors.red, end: Colors.blue).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
@@ -83,19 +83,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               ScaleTransition(
                 scale: _logoScaleAnimation,
                 child: Container(
-                  width: 200, // Diameter of the circle container
-                  height: 200, // Diameter of the circle container
+                  width: 200,
+                  height: 200, 
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white, // Background color inside the circle
-                    border: Border.all(color: Colors.grey, width: 5.0), // Border around the circle
+                    color: Colors.white, 
+                    border: Border.all(color: Colors.grey, width: 5.0), 
                   ),
                   child: Center(
                     child: CircleAvatar(
-                      backgroundColor: Colors.transparent, // Transparent background for the logo
-                      radius: 90, // Radius for the logo container
+                      backgroundColor: Colors.transparent, 
+                      radius: 90, 
                       child: Image.asset(
-                        'assets/logoEsprit copy.png', // Ensure this image exists in your assets
+                        'assets/logoEsprit copy.png', 
                         width: 150, // Width of the logo
                         height: 150, // Height of the logo
                         fit: BoxFit.contain, // Ensure the logo fits well within the CircleAvatar

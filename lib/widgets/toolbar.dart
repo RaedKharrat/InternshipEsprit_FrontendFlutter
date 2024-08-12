@@ -41,7 +41,7 @@ class _CustomToolbarState extends State<CustomToolbar> {
       onTap: () {
         _setActiveItem(itemName);
         if (itemName == 'credits') {
-          _showCreditsDialog(); // Show the credits popup
+          _showCreditsDialog(); 
         } else if (page != null) {
           Navigator.push(
             context,
@@ -74,7 +74,7 @@ class _CustomToolbarState extends State<CustomToolbar> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Credits'),
-          content: const Text('Made by Raed Kharrat\nWith contributions from the Flutter community.\nAll copyrights are reserved to RK-Hub©'),
+          content: const Text('Made by Raed Kharrat & Manel b.mansour\nWith contributions from the Flutter community.\nAll copyrights are reserved to RK-Hub©'),
           actions: [
             TextButton(
               onPressed: () {

@@ -15,9 +15,44 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<int> _animation;
+
+  final String welcomeText = 'Welcome back Mr. John Doe';
+  late bool _isReversing;
   int _selectedIndex = -1;
   bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isReversing = false;
+    _controller = AnimationController(
+      duration: const Duration(seconds: 4),
+      vsync: this,
+    )..addStatusListener((status) {
+        if (status == AnimationStatus.completed && !_isReversing) {
+          setState(() {
+            _isReversing = true;
+          });
+          _controller.reverse();
+        } else if (status == AnimationStatus.dismissed && _isReversing) {
+          setState(() {
+            _isReversing = false;
+          });
+          _controller.forward();
+        }
+      });
+    _animation = IntTween(begin: 0, end: welcomeText.length).animate(_controller);
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +73,6 @@ class _HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-     // appBar:  HedhahouwaAppBar(),
       body: Stack(
         children: [
           Container(
@@ -55,27 +89,26 @@ class _HomePageState extends State<HomePage> {
               Padding(
                 padding: const EdgeInsets.all(9.0),
                 child: Column(
-                  children: [
-                    
-                    const SizedBox(height: 5), // Adjust spacing if needed
-                    // Text(
-                    //   'Teachers Space',
-                    //   style: const TextStyle(
-                    //     color: Colors.red,
-                    //     fontSize: 24,
-                    //     fontWeight: FontWeight.bold,
-                    //   ),
-                    // ),
-                    const SizedBox(height: 230),
-                    Text(
-                      'Welcome back Mr. John Doe',
+                  children: const [
+                    SizedBox(height: 5), // Adjust spacing if needed
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 230.0),
+                child: AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    String displayText = welcomeText.substring(0, _animation.value);
+                    return Text(
+                      displayText,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
               Expanded(
@@ -101,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                                 _selectedIndex = index;
                                 _isPressed = true;
                               });
-                              Future.delayed(const Duration(milliseconds: 200), () {
+                              Future.delayed(const Duration(milliseconds: 150), () {
                                 setState(() {
                                   _isPressed = false;
                                 });
@@ -175,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                                       Icon(
                                         item['icon'] as IconData,
                                         color: Colors.white,
-                                        size: 40,
+                                        size: 70,
                                       ),
                                       const SizedBox(height: 10),
                                       Text(
