@@ -1,147 +1,172 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'cahierdeclassForm.dart';
-import 'detailsCahierClass.dart';
+import '../api/cachierdeclass_service.dart';
+import '../screens/DetailsCahierClass.dart'; // Import the EvaluationsChart
+import '../screens/CahierdeclassForm.dart'; // Import the EvaluationsChart
 
-class DisplayCahierClass extends StatelessWidget {
-  // Sample records data
-  final List<Map<String, dynamic>> records = [
-    {
-      'toggleValue': true,
-      'choice1': 'Option 1',
-      'dateFrom': DateTime.now().subtract(Duration(days: 1)),
-      'dateTo': DateTime.now(),
-      'choice2': 'Option 2',
-      'textField': 'Session Title 1',
-      'areaField1': 'Content treated in this session...',
-      'areaField2': 'Remarks about the session...',
-    },
-  ];
+class DisplayCahierClass extends StatefulWidget {
+  const DisplayCahierClass({Key? key}) : super(key: key);
+
+  @override
+  State<DisplayCahierClass> createState() => _DisplayCahierClassState();
+}
+
+class _DisplayCahierClassState extends State<DisplayCahierClass> {
+  late CahierClasseService _service;
+  late Future<List<dynamic>> _futureCahierClasses;
+
+  @override
+  void initState() {
+    super.initState();
+    _service = CahierClasseService(baseUrl: 'http://localhost:5000');
+    _futureCahierClasses = _service.getCahierClasses();
+  }
+
+  void _navigateToDetailsCahierClass(Map<String, dynamic> record) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailsCahierClass(record: record),
+      ),
+    );
+  }
+
+  void _navigateToCahierdeclassForm() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CahierdeclassForm(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Display Cahier de Classe', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.red[900],
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Cahier de Classe'),
+        backgroundColor: Colors.red, // Red color for the AppBar
+        iconTheme: const IconThemeData(color: Colors.white), // White color for the back button
+        titleTextStyle: const TextStyle(color: Colors.white), // White color for the title
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CahierdeclassForm(),
-                ),
-              );
-            },
+            icon: const Icon(Icons.add, color: Colors.white), // "+" icon
+            onPressed: _navigateToCahierdeclassForm,
           ),
         ],
       ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Background image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/bg1.png'), // Ensure the path is correct
-                fit: BoxFit.cover,
-              ),
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/bg1.png'), // Make sure bg1.png is in the assets directory
+            fit: BoxFit.cover, // Fit the image to cover the screen
           ),
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: records.map((record) {
+        ),
+        child: FutureBuilder<List<dynamic>>(
+          future: _futureCahierClasses,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No Cahier de Classe found.'));
+            } else {
+              final cahierClasses = snapshot.data!;
+              return ListView.builder(
+                itemCount: cahierClasses.length,
+                itemBuilder: (context, index) {
+                  final cahier = cahierClasses[index];
                   return Card(
-                    color: Colors.black.withOpacity(0.5),
-                    margin: const EdgeInsets.only(bottom: 16.0),
+                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                    elevation: 5,
+                    color: Colors.white.withOpacity(0.9), // Slightly transparent white background
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildRecordDetail('Semestre', record['toggleValue'] ? 'Semestre 1' : 'Semestre 2'),
-                          const SizedBox(height: 10),
-                          _buildRecordDetail('Classe', record['choice1']),
-                          const SizedBox(height: 10),
-                          _buildRecordDetail(
-                            'Horaire de travail',
-                            '${DateFormat.yMd().format(record['dateFrom'])} - ${DateFormat.yMd().format(record['dateTo'])}',
-                          ),
-                          const SizedBox(height: 10),
-                          _buildRecordDetail('Module', record['choice2']),
-                          const SizedBox(height: 10),
-                          _buildRecordDetail('Titre de la Séance', record['textField']),
-                          const SizedBox(height: 10),
-                          _buildRecordDetail('Contenu Traité', record['areaField1']),
-                          const SizedBox(height: 10),
-                          _buildRecordDetail('Remarque', record['areaField2']),
-                          const SizedBox(height: 10),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DetailsCahierClass(record: record),
-                                  ),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.red[900], // Button color
-                                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text(
-                                'Show',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(16.0),
+                          title: Text(
+                            cahier['titre_seance'] ?? 'No Title',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.black87, // Darker text color for better readability
                             ),
                           ),
-                        ],
-                      ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              Text(
+                                'Date: ${cahier['date']?.toString().substring(0, 10) ?? 'No Date'}', // Displaying only date part
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Horaire: ${cahier['horaire_seance'] ?? 'No Time'}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Contenu: ${cahier['contenu'] ?? 'No Content'}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Remarque: ${cahier['remarque'] ?? 'No Remarks'}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Semestre: ${cahier['semestre'] ?? 'No Semester'}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ElevatedButton(
+                            onPressed: () => _navigateToDetailsCahierClass(cahier),
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.red,
+                              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: const Text(
+                              'Show Details',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
+                },
+              );
+            }
+          },
+        ),
       ),
-    );
-  }
-
-  Widget _buildRecordDetail(String label, String? detail) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '$label:',
-          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            detail ?? 'N/A',
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-      ],
     );
   }
 }

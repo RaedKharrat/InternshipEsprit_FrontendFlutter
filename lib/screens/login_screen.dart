@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:snow_login/utils/animations.dart';
 import '../data/bg_data.dart';
 import '../utils/text_utils.dart';
-import 'homepage.dart'; // Import the HomePage
+import 'homepage.dart';
+import '../api/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +17,55 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   int selectedIndex = 0;
   bool showOption = false;
   bool _isPressed = false;
+  String? _emailError;
+  String? _passwordError;
+  String? _loginError;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  // Email validation using regular expression
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    return emailRegex.hasMatch(email);
+  }
+
+  // Login logic
+  Future<void> _login() async {
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+      _loginError = null;
+    });
+
+    // Validate email format
+    if (!_isValidEmail(_emailController.text)) {
+      setState(() {
+        _emailError = 'Invalid email format';
+      });
+      return;
+    }
+
+    // Call the login function
+    final response = await AuthService.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (response['token'] != null) {
+      await AuthService.saveToken(response['token']); // Save the token
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } else {
+      // Handle error, show a message
+      setState(() {
+        _loginError = response['message'] ?? 'Login failed';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +163,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             child: Container(
               margin: const EdgeInsets.all(20),
               child: Image.asset(
-                'assets/logoEsprit copy.png', // Update the path to your logo asset
-                height: 60, // Adjust the height as needed
+                'assets/logoEsprit copy.png',
+                height: 60,
               ),
             ),
           ),
@@ -151,50 +201,53 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           ),
                         ),
                         const Spacer(),
-                        TextUtil(
-                          text: "Email",
-                        ),
+                        TextUtil(text: "Email"),
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
                               border: Border(bottom: BorderSide(color: Colors.white))),
                           child: TextFormField(
+                            controller: _emailController,
                             style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Enter your email',
-                              hintStyle: TextStyle(color: Colors.white70),
-                              suffixIcon: Icon(
-                                Icons.mail,
-                                color: Colors.white,
-                              ),
+                              hintStyle: const TextStyle(color: Colors.white70),
+                              suffixIcon: const Icon(Icons.mail, color: Colors.white),
                               fillColor: Colors.white,
                               border: InputBorder.none,
+                              errorText: _emailError, // Show email error
                             ),
                           ),
                         ),
                         const Spacer(),
-                        TextUtil(
-                          text: "Password",
-                        ),
+                        TextUtil(text: "Password"),
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
                               border: Border(bottom: BorderSide(color: Colors.white))),
                           child: TextFormField(
+                            controller: _passwordController,
                             style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
+                            obscureText: true,
+                            decoration: InputDecoration(
                               hintText: 'Enter your password',
-                              hintStyle: TextStyle(color: Colors.white70),
-                              suffixIcon: Icon(
-                                Icons.lock,
-                                color: Colors.white,
-                              ),
+                              hintStyle: const TextStyle(color: Colors.white70),
+                              suffixIcon: const Icon(Icons.lock, color: Colors.white),
                               fillColor: Colors.white,
                               border: InputBorder.none,
+                              errorText: _passwordError, // Show password error
                             ),
                           ),
                         ),
                         const Spacer(),
+                        if (_loginError != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Text(
+                              _loginError!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
                         Row(
                           children: [
                             const SizedBox(width: 10,),
@@ -221,30 +274,22 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               setState(() {
                                 _isPressed = true;
                               });
-                              Future.delayed(const Duration(milliseconds: 100), () {
-                                setState(() {
-                                  _isPressed = false;
-                                });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const HomePage()),
-                                );
-                              });
+                              Future.delayed(const Duration(milliseconds: 100), _login);
                             },
                             child: Container(
-                              height: 40,
+                              height: 35,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Colors.white.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(30),
                               ),
-                              alignment: Alignment.center,
-                              child: TextUtil(
-                                text: "Log In",
-                                color: Colors.black,
+                              child: const Center(
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
-                            splashColor: Colors.black.withOpacity(0.2), // Ripple effect color
                           ),
                         ),
                         const Spacer(),
@@ -254,83 +299,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
   }
-}
-
-// AnimatedTriangles widget to create a moving triangles effect
-class AnimatedTriangles extends StatefulWidget {
-  @override
-  _AnimatedTrianglesState createState() => _AnimatedTrianglesState();
-}
-
-class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    )..repeat(reverse: true);
-    _animation = Tween<double>(begin: -100, end: 250).animate(_controller);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Stack(
-        children: List.generate(10, (index) {
-          return AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Positioned(
-                left: _animation.value + (index * 100.0),
-                top: (index % 2 == 0) ? 0 : 50,
-                child: Opacity(
-                  opacity: 0.5,
-                  child: CustomPaint(
-                    size: Size(100, 100), // Size of the triangle
-                    painter: TrianglePainter(),
-                  ),
-                ),
-              );
-            },
-          );
-        }),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
-
-// Custom painter to draw triangles
-class TrianglePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = Colors.white.withOpacity(0.3) // Triangle color
-      ..style = PaintingStyle.fill;
-
-    final Path path = Path()
-      ..moveTo(size.width / 2, 0)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

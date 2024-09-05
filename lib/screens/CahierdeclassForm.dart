@@ -10,32 +10,30 @@ class CahierdeclassForm extends StatefulWidget {
 }
 
 class _CahierdeclassFormState extends State<CahierdeclassForm> {
-  bool _toggleValue = false;
-  String? _choice1;
-  String? _choice2;
-  String? _choice3;
-  String? _choice4;
-  DateTime? _selectedDateFrom;
-  DateTime? _selectedDateTo;
-  final TextEditingController _textFieldController = TextEditingController();
-  final TextEditingController _areaField1Controller = TextEditingController();
-  final TextEditingController _areaField2Controller = TextEditingController();
+  bool toggleValue = false;
+  String choice1 = 'Option 1';
+  DateTime dateFrom = DateTime.now();
+  DateTime dateTo = DateTime.now().add(const Duration(days: 7));
+  String choice2 = 'Option 1';
+  String textField = '';
+  String areaField1 = '';
+  String areaField2 = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cahier de Classe Form', style: TextStyle(color: Colors.white)),
+        title: const Text('Nouvelle Entrée', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.red[900],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // Background image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/bg1.png'), // Update the path if necessary
+                image: AssetImage('assets/bg1.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -60,28 +58,39 @@ class _CahierdeclassFormState extends State<CahierdeclassForm> {
                           const SizedBox(height: 20),
                           _buildToggle(),
                           const SizedBox(height: 20),
-                          _buildChoiceType('Classe', _choice1, (value) {
+                          _buildDropdown('Classe', ['Option 1', 'Option 2'], choice1, (String? newValue) {
                             setState(() {
-                              _choice1 = value;
+                              choice1 = newValue!;
                             });
                           }),
                           const SizedBox(height: 20),
-                          _buildDatePickers(),
+                          _buildDateRangePicker(),
                           const SizedBox(height: 20),
-                          _buildChoiceType('Module', _choice2, (value) {
+                          _buildDropdown('Module', ['Option 1', 'Option 2'], choice2, (String? newValue) {
                             setState(() {
-                              _choice2 = value;
+                              choice2 = newValue!;
                             });
                           }),
                           const SizedBox(height: 20),
-                          _buildTextField(),
+                          _buildTextField('Titre de la Séance', textField, (String? newValue) {
+                            setState(() {
+                              textField = newValue!;
+                            });
+                          }),
                           const SizedBox(height: 20),
-                          _buildAreaField('Contenu Traité', _areaField1Controller),
+                          _buildTextField('Contenu Traité', areaField1, (String? newValue) {
+                            setState(() {
+                              areaField1 = newValue!;
+                            });
+                          }),
                           const SizedBox(height: 20),
-                          _buildAreaField('Remarque', _areaField2Controller),
+                          _buildTextField('Remarque', areaField2, (String? newValue) {
+                            setState(() {
+                              areaField2 = newValue!;
+                            });
+                          }),
                           const SizedBox(height: 20),
-                          _buildSubmitButton(),
-                          const SizedBox(height: 20),
+                          _buildButtons(),
                         ],
                       ),
                     ),
@@ -110,10 +119,10 @@ class _CahierdeclassFormState extends State<CahierdeclassForm> {
               style: TextStyle(color: Colors.white),
             ),
             Switch(
-              value: _toggleValue,
-              onChanged: (value) {
+              value: toggleValue,
+              onChanged: (bool newValue) {
                 setState(() {
-                  _toggleValue = value;
+                  toggleValue = newValue;
                 });
               },
               activeColor: Colors.green,
@@ -129,33 +138,34 @@ class _CahierdeclassFormState extends State<CahierdeclassForm> {
     );
   }
 
-  Widget _buildChoiceType(String label, String? choice, ValueChanged<String?> onChanged) {
+  Widget _buildDropdown(String label, List<String> options, String selectedValue, ValueChanged<String?> onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          '$label:',
           style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         DropdownButton<String>(
-          value: choice,
-          items: ['Option 1', 'Option 2', 'Option 3'].map((String value) {
+          value: selectedValue,
+          dropdownColor: Colors.black,
+          iconEnabledColor: Colors.white,
+          items: options.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
-              child: Text(value),
+              child: Text(value, style: const TextStyle(color: Colors.white)),
             );
           }).toList(),
           onChanged: onChanged,
-          dropdownColor: Colors.black,
-          style: const TextStyle(color: Colors.white),
           isExpanded: true,
+          underline: Container(),
         ),
       ],
     );
   }
 
-  Widget _buildDatePickers() {
+  Widget _buildDateRangePicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -164,94 +174,49 @@ class _CahierdeclassFormState extends State<CahierdeclassForm> {
           style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: _buildDatePicker('De', _selectedDateFrom, (pickedDate) {
-                setState(() {
-                  _selectedDateFrom = pickedDate;
-                });
-              }),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _buildDatePicker('À', _selectedDateTo, (pickedDate) {
-                setState(() {
-                  _selectedDateTo = pickedDate;
-                });
-              }),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDatePicker(String label, DateTime? selectedDate, ValueChanged<DateTime?> onDateChanged) {
-    return GestureDetector(
-      onTap: () async {
-        DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2100),
-        );
-        if (pickedDate != null) {
-          onDateChanged(pickedDate);
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Text(
-          selectedDate == null ? label : DateFormat.yMd().format(selectedDate),
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Titre de la Séance:',
-          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          controller: _textFieldController,
-          decoration: InputDecoration(
-            labelText: 'Titre de la Séance',
-            labelStyle: const TextStyle(color: Colors.white),
-            filled: true,
-            fillColor: Colors.black.withOpacity(0.5),
-            border: OutlineInputBorder(
+        GestureDetector(
+          onTap: () async {
+            DateTimeRange? picked = await showDateRangePicker(
+              context: context,
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2101),
+              initialDateRange: DateTimeRange(start: dateFrom, end: dateTo),
+            );
+            if (picked != null && picked.start != dateFrom && picked.end != dateTo) {
+              setState(() {
+                dateFrom = picked.start;
+                dateTo = picked.end;
+              });
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.5),
               borderRadius: BorderRadius.circular(8.0),
             ),
+            child: Text(
+              '${DateFormat.yMd().format(dateFrom)} - ${DateFormat.yMd().format(dateTo)}',
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
-          style: const TextStyle(color: Colors.white),
         ),
       ],
     );
   }
 
-  Widget _buildAreaField(String label, TextEditingController controller) {
+  Widget _buildTextField(String label, String value, ValueChanged<String?> onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          '$label:',
           style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        TextField(
-          controller: controller,
-          maxLines: 5,
+        TextFormField(
+          initialValue: value,
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.black.withOpacity(0.5),
@@ -259,114 +224,65 @@ class _CahierdeclassFormState extends State<CahierdeclassForm> {
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),
-          style: const TextStyle(color: Colors.white),
+          onChanged: onChanged,
         ),
       ],
     );
   }
 
-  Widget _buildSubmitButton() {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
+  Widget _buildButtons() {
+    return Center(
+      child: Column(
+        children: [
+          ElevatedButton(
             onPressed: () {
-              _showSubmitAnimation();
+              // Implement the save action here
             },
             style: ElevatedButton.styleFrom(
-              primary: Colors.orange, // Button color
-              padding: const EdgeInsets.symmetric(vertical: 15.0), // Button padding
+              primary: Colors.green,
+              padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Button border radius
+                borderRadius: BorderRadius.circular(10),
               ),
+              minimumSize: const Size(double.infinity, 48),
             ),
             child: const Text(
-              'Submit',
-              style: TextStyle(fontSize: 18, color: Colors.white),
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-
-  void _showSubmitAnimation() {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      pageBuilder: (context, animation1, animation2) {
-        return Container();
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        return FadeTransition(
-          opacity: animation1,
-          child: ScaleTransition(
-            scale: CurvedAnimation(
-              parent: animation1,
-              curve: Curves.elasticOut,
-              reverseCurve: Curves.easeOutCubic,
-            ),
-            child: _buildAnimatedDialog(),
-          ),
-        );
-      },
-      transitionDuration: const Duration(seconds: 1),
-    );
-  }
-
-  Widget _buildAnimatedDialog() {
-    return Center(
-      child: Container(
-        width: 300,
-        height: 300,
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 100,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              "Your form was successfully added",
+              'Enregistrer',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/home');
-              },
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.green),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              child: const Text(
-                'Back to Home',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.green,
-                ),
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Ou',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              minimumSize: const Size(double.infinity, 48),
+            ),
+            child: const Text(
+              'Annuler',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
