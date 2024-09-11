@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../data/bg_data.dart';
 import '../utils/text_utils.dart';
+import '../api/forgetpwd_service.dart'; // Import the service
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -11,8 +12,50 @@ class ForgetPasswordScreen extends StatefulWidget {
 }
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
-  int selectedIndex = 0;
+  final TextEditingController _emailController = TextEditingController();
+  final ForgetPwdService _service = ForgetPwdService(); // Initialize the service
+
   bool showOption = false;
+  int selectedIndex = 0;
+
+  Future<void> _handleSendResetLink() async {
+    final String email = _emailController.text.trim();
+
+    if (email.isEmpty) {
+      _showErrorDialog('Please enter an email address.');
+      return;
+    }
+
+    try {
+      await _service.requestPasswordReset(email);
+      Navigator.pushNamed(
+      context, 
+      '/verifyOTP', 
+      arguments: email, // Passing email as argument
+    );    } catch (e) {
+      _showErrorDialog('Error sending reset link: $e');
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,12 +179,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                           size: 30,
                         ),
                         const SizedBox(height: 15),
-                        
                         Container(
                           height: 35,
                           decoration: const BoxDecoration(
                               border: Border(bottom: BorderSide(color: Colors.white))),
                           child: TextFormField(
+                            controller: _emailController,
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
                               hintText: 'Enter your email',
@@ -157,48 +200,45 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         ),
                         const Spacer(),
                         GestureDetector(
-  onTap: () {
-    Navigator.pushNamed(context, '/verifyOTP');
-  },
-  child: Container(
-    height: 40,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(30),
-    ),
-    alignment: Alignment.center,
-    child: TextUtil(
-      text: "Send Reset Link",
-      color: Colors.black,
-    ),
-  ),
-),
-const Spacer(),
-Center(
-  child: GestureDetector(
-    onTap: () {
-      Navigator.pop(context);
-    },
-    child: Container(
-      height: 40,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        border: Border.all(color: Colors.white),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      alignment: Alignment.center,
-      child: TextUtil(
-        text: "Back to Login",
-        color: Colors.white, // Ensuring text color is visible
-        size: 12,
-        weight: true,
-      ),
-    ),
-  ),
-),
-
+                          onTap: _handleSendResetLink,
+                          child: Container(
+                            height: 40,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            alignment: Alignment.center,
+                            child: TextUtil(
+                              text: "Send Reset Link",
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 40,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(color: Colors.white),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              alignment: Alignment.center,
+                              child: TextUtil(
+                                text: "Back to Login",
+                                color: Colors.white,
+                                size: 12,
+                                weight: true,
+                              ),
+                            ),
+                          ),
+                        ),
                         const Spacer(),
                       ],
                     ),
@@ -283,5 +323,5 @@ class TrianglePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

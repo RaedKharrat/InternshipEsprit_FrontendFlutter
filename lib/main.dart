@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:snow_login/screens/login_screen.dart';
 import 'package:snow_login/screens/forgetpassword.dart';
 import 'package:snow_login/screens/verifyCodefp.dart';
-import 'package:snow_login/screens/newpassword.dart';
+import 'package:snow_login/screens/newpassword.dart'; // Import only once from this location
 import 'package:snow_login/screens/homepage.dart';
 import 'package:snow_login/screens/reclamations.dart';
 import 'package:snow_login/screens/splash_screen.dart'; 
@@ -28,8 +28,13 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/forgetpassword': (context) => const ForgetPasswordScreen(),
         '/verifyOTP': (context) => const VerifyCodefpScreen(),
-        '/changepwd': (context) => const NewPasswordScreen(),
-        '/homepage': (context) => const HomePage(),
+'/changepwd': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+          return NewPasswordScreen(
+            email: args['email']!,
+            code: args['code']!,
+          );
+        },        '/homepage': (context) => const HomePage(),
         '/Reclamations': (context) => const ReclamationsScreen(),
       },
     );

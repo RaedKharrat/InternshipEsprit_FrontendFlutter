@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 
 class AuthService {
@@ -44,5 +45,37 @@ class AuthService {
       print('Token retrieved: $token');
     }
     return token;
+  }
+
+  // Logout method
+  static Future<void> logout(BuildContext context) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
+
+      if (token != null && token.isNotEmpty) {
+        final response = await http.post(
+          Uri.parse('$_baseUrl/logout'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token', // Use token for authentication if required
+          },
+        );
+
+        if (response.statusCode == 200) {
+          await prefs.remove('auth_token'); // Clear token
+          print('Logged out successfully');
+
+          // Navigate to the login screen after successful logout
+          Navigator.pushReplacementNamed(context, '/login');
+        } else {
+          print('Logout failed: ${response.body}');
+        }
+      } else {
+        print('No token found to logout');
+      }
+    } catch (e) {
+      print('Error logging out: $e');
+    }
   }
 }

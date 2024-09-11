@@ -16,13 +16,11 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
   String? horaireSeance;
   String? titreSeance;
   String? remarque;
-  String? moduleId;
-  String? classeId;
+  String? selectedModule;
+  String? selectedClasse;
   bool semestre = true; // Use boolean for toggle
 
   // Dropdown data (modules and classes)
-  String? selectedModule;
-  String? selectedClasse;
   List<String> modules = ['66db9a519c87ba6ec665608a', '66db9a559c87ba6ec665608b', 'Module 3'];
   List<String> classes = ['66db9a309c87ba6ec6656087', '66db9a439c87ba6ec6656088', 'Class 3'];
 
@@ -87,23 +85,22 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
             fit: BoxFit.cover,
           ),
         ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
-          child: Center(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(16.0),
             child: Container(
-              width: double.infinity,
-              constraints: BoxConstraints(maxWidth: 600),
+              constraints: BoxConstraints(maxWidth: 700),
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.red.withOpacity(0.6), width: 2),
+                color: Colors.grey[900]!.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.red.withOpacity(0.8), width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    spreadRadius: 5,
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 2,
                     blurRadius: 10,
-                    offset: Offset(0, 3),
+                    offset: Offset(0, 5),
                   ),
                 ],
               ),
@@ -117,47 +114,47 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
                       onTap: () => _selectDate(context),
                       child: _buildDateField(),
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     _buildTextAreaField(
                       label: 'Contenu',
                       onSaved: (value) => contenu = value,
-                      validator: (value) => value!.isEmpty ? 'Please enter contenu' : null,
+                      validator: (value) => value!.isEmpty ? 'Veuillez entrer le contenu' : null,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     _buildTextFormField(
                       label: 'Horaire Séance',
                       onSaved: (value) => horaireSeance = value,
-                      validator: (value) => value!.isEmpty ? 'Please enter horaire séance' : null,
+                      validator: (value) => value!.isEmpty ? 'Veuillez entrer l\'horaire de la séance' : null,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     _buildTextFormField(
                       label: 'Titre Séance',
                       onSaved: (value) => titreSeance = value,
-                      validator: (value) => value!.isEmpty ? 'Please enter titre séance' : null,
+                      validator: (value) => value!.isEmpty ? 'Veuillez entrer le titre de la séance' : null,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     _buildTextAreaField(
                       label: 'Remarque',
                       onSaved: (value) => remarque = value,
                       validator: (value) => null,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     _buildDropdownField(
                       label: 'Module',
                       items: modules,
                       onChanged: (value) => setState(() => selectedModule = value),
                       value: selectedModule,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     _buildDropdownField(
                       label: 'Classe',
                       items: classes,
                       onChanged: (value) => setState(() => selectedClasse = value),
                       value: selectedClasse,
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 20),
                     _buildToggleButton(),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 40),
                     ElevatedButton(
                       onPressed: _submitForm,
                       style: ElevatedButton.styleFrom(
@@ -168,7 +165,7 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
                         ),
                       ),
                       child: Text(
-                        'Submit',
+                        'Create',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -191,7 +188,10 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
       decoration: InputDecoration(
         labelText: 'Date',
         border: OutlineInputBorder(),
-        suffixIcon: Icon(Icons.calendar_today),
+        suffixIcon: Icon(Icons.calendar_today, color: Colors.red),
+        filled: true,
+        fillColor: Colors.grey[800],
+        labelStyle: TextStyle(color: Colors.white),
       ),
       readOnly: true,
       onTap: () => _selectDate(context),
@@ -207,6 +207,9 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.grey[800],
+        labelStyle: TextStyle(color: Colors.white),
       ),
       keyboardType: TextInputType.text,
       onSaved: onSaved,
@@ -223,6 +226,9 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.grey[800],
+        labelStyle: TextStyle(color: Colors.white),
       ),
       keyboardType: TextInputType.multiline,
       maxLines: 3,
@@ -241,14 +247,17 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.grey[800],
+        labelStyle: TextStyle(color: Colors.white),
       ),
       value: value,
       items: items.map((item) => DropdownMenuItem<String>(
         value: item,
-        child: Text(item),
+        child: Text(item, style: TextStyle(color: Colors.white)),
       )).toList(),
       onChanged: onChanged,
-      validator: (value) => value == null ? 'Please select $label' : null,
+      validator: (value) => value == null ? 'Veuillez sélectionner $label' : null,
     );
   }
 
@@ -256,12 +265,13 @@ class _CreateCahierClasseState extends State<CreateCahierClasse> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('Semestre 1'),
+        Text('Semestre 1', style: TextStyle(color: Colors.white)),
         Switch(
           value: semestre,
           onChanged: (value) => setState(() => semestre = value),
+          activeColor: Colors.red,
         ),
-        Text('Semestre 2'),
+        Text('Semestre 2', style: TextStyle(color: Colors.white)),
       ],
     );
   }

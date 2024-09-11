@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/toolbar.dart'; // Ensure you import the custom toolbar
 import 'login_screen.dart'; // Import your LoginScreen
+import '../api/auth_service.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -58,17 +60,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     }
   }
 
-  void _logout() {
-    // Implement logout logic here
-    // For example, clear user data or token
-    // SharedPreferences, Firebase Auth, or any other service
-
-    // Navigate to the LoginScreen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-    );
-  }
+void _logout() async {
+  await AuthService.logout(context); // Call the logout method from AuthService
+}
 
   @override
   Widget build(BuildContext context) {

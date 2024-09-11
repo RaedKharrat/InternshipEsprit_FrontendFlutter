@@ -12,11 +12,6 @@ class CustomToolbar extends StatefulWidget {
 class _CustomToolbarState extends State<CustomToolbar> {
   String _activeItem = '';
 
-  void _setActiveItem(String item) {
-    setState(() {
-      _activeItem = item;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +34,7 @@ class _CustomToolbarState extends State<CustomToolbar> {
     bool isActive = _activeItem == itemName;
     return GestureDetector(
       onTap: () {
-        _setActiveItem(itemName);
+        
         if (itemName == 'credits') {
           _showCreditsDialog(); 
         } else if (page != null) {

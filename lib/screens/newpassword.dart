@@ -1,323 +1,226 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../data/bg_data.dart'; // Ensure bgList is defined here
-import '../utils/text_utils.dart'; // Ensure TextUtil is defined here
-import 'login_screen.dart'; // Import your LoginScreen
+import 'package:http/http.dart' as http;
 
 class NewPasswordScreen extends StatefulWidget {
-  const NewPasswordScreen({super.key});
+  final String email;
+  final String code;
+
+  const NewPasswordScreen({
+    Key? key,
+    required this.email,
+    required this.code,
+  }) : super(key: key);
 
   @override
   State<NewPasswordScreen> createState() => _NewPasswordScreenState();
 }
 
 class _NewPasswordScreenState extends State<NewPasswordScreen> {
-  int selectedIndex = 0;
-  bool showOption = false;
-  bool _obscureText1 = true; // Toggle for the first password field
-  bool _obscureText2 = true; // Toggle for the confirm password field
+  bool _obscureText1 = true;
+  bool _obscureText2 = true;
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final String apiUrl = 'http://localhost:5000/api/pwd'; // Replace with your backend URL
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        height: 49,
-        width: double.infinity,
-        child: Row(
-          children: [
-            Expanded(
-              child: showOption
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: bgList.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = index;
-                            });
-                          },
-                          child: CircleAvatar(
-                            radius: 30,
-                            backgroundColor: selectedIndex == index
-                                ? Colors.white
-                                : Colors.transparent,
-                            child: Padding(
-                              padding: const EdgeInsets.all(1),
-                              child: CircleAvatar(
-                                radius: 30,
-                                backgroundImage: AssetImage(bgList[index]),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                  : const SizedBox(),
+  Future<void> _resetPassword() async {
+    final newPassword = _newPasswordController.text;
+
+    if (newPassword.isEmpty || _confirmPasswordController.text != newPassword) {
+      // Show an error message
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse('$apiUrl/reset-password'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': widget.email,
+        'code': widget.code,
+        'newPassword': newPassword,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      Navigator.pushNamed(context, '/login'); // Navigate to login page
+    } else {
+      final responseBody = jsonDecode(response.body);
+      final errorMessage = responseBody['message'] ?? 'Error updating password';
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text(errorMessage),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            const SizedBox(width: 20),
-            showOption
-                ? GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showOption = false;
-                      });
-                    },
-                    child: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  )
-                : GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        showOption = true;
-                      });
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(1),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: AssetImage(bgList[selectedIndex]),
-                        ),
-                      ),
-                    ),
-                  ),
           ],
         ),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
+      );
+    }
+  }
+
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Stack(
+      children: [
+        // Background image
+        Positioned.fill(
+          child: Image.asset(
+            'assets/bg1.png', // Path to your background image
+            fit: BoxFit.cover,
+          ),
+        ),
+        Center(
+          child: Container(
+            height: 400,
             width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 30),
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(bgList[selectedIndex]),
-                fit: BoxFit.fill,
-              ),
+              border: Border.all(color: Colors.white),
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.black.withOpacity(0.3), // Adjust opacity for overlay
             ),
-          ),
-          // Animated triangles in the background
-          AnimatedTriangles(),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              margin: const EdgeInsets.all(20),
-              child: Image.asset(
-                'assets/logoEsprit copy.png', // Ensure the path is correct
-                height: 60, // Adjust the height as needed
-              ),
-            ),
-          ),
-          Center(
-            child: Container(
-              height: 400,
-              width: double.infinity,
-              margin: const EdgeInsets.symmetric(horizontal: 30),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.black.withOpacity(0.1),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
-                  child: Padding(
-                    padding: const EdgeInsets.all(25),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Spacer(),
-                        TextUtil(
-                          text: "Reinitialize Password",
-                          weight: true,
-                          size: 30,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaY: 10, sigmaX: 10),
+                child: Padding(
+                  padding: const EdgeInsets.all(25),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+                    crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+                    children: [
+                      Text(
+                        "Reinitialize Password",
+                        style: TextStyle(
+                          fontSize: 28, // Adjust font size
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'Roboto', // Match font family
                         ),
-                        const SizedBox(height: 15),
-                        Container(
-                          height: 35,
-                          decoration: const BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Colors.white)),
-                          ),
-                          child: TextFormField(
-                            obscureText: _obscureText1,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: 'Enter your new password',
-                              hintStyle: const TextStyle(color: Colors.white70),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureText1 ? Icons.visibility : Icons.visibility_off,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureText1 = !_obscureText1;
-                                  });
-                                },
+                        textAlign: TextAlign.center, // Center text horizontally
+                      ),
+                      const SizedBox(height: 15),
+                      Container(
+                        height: 50, // Adjust height for better visibility
+                        decoration: const BoxDecoration(
+                          border: Border(bottom: BorderSide(color: Colors.white)),
+                        ),
+                        child: TextFormField(
+                          controller: _newPasswordController,
+                          obscureText: _obscureText1,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Enter your new password',
+                            hintStyle: const TextStyle(color: Colors.white70),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText1 ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.white,
                               ),
-                              fillColor: Colors.white,
-                              border: InputBorder.none,
+                              onPressed: () {
+                                setState(() {
+                                  _obscureText1 = !_obscureText1;
+                                });
+                              },
                             ),
+                            fillColor: Colors.white,
+                            border: InputBorder.none,
                           ),
                         ),
-                        const SizedBox(height: 15),
-                        Container(
-                          height: 35,
-                          decoration: const BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Colors.white)),
-                          ),
-                          child: TextFormField(
-                            obscureText: _obscureText2,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: 'Confirm your new password',
-                              hintStyle: const TextStyle(color: Colors.white70),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureText2 ? Icons.visibility : Icons.visibility_off,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureText2 = !_obscureText2;
-                                  });
-                                },
+                      ),
+                      const SizedBox(height: 15),
+                      Container(
+                        height: 50, // Adjust height for better visibility
+                        decoration: const BoxDecoration(
+                          border: Border(bottom: BorderSide(color: Colors.white)),
+                        ),
+                        child: TextFormField(
+                          controller: _confirmPasswordController,
+                          obscureText: _obscureText2,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: 'Confirm your new password',
+                            hintStyle: const TextStyle(color: Colors.white70),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText2 ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.white,
                               ),
-                              fillColor: Colors.white,
-                              border: InputBorder.none,
+                              onPressed: () {
+                                setState(() {
+                                  _obscureText2 = !_obscureText2;
+                                });
+                              },
                             ),
+                            fillColor: Colors.white,
+                            border: InputBorder.none,
                           ),
                         ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/homepage');
+                      ),
+                      const SizedBox(height: 15),
+                      GestureDetector(
+                        onTap: _resetPassword,
+                        child: Container(
+                          height: 50, // Adjust height for better visibility
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Confirm",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Roboto', // Match font family
+                              fontSize: 18, // Adjust font size
+                            ),
+                            textAlign: TextAlign.center, // Center text
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/login');
                           },
-                          child: Container(
-                            height: 40,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
+                          style: OutlinedButton.styleFrom(
+                            primary: Colors.white,
+                            side: BorderSide(color: Colors.white),
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            alignment: Alignment.center,
-                            child: TextUtil(
-                              text: "Confirm",
-                              color: Colors.black,
-                            ),
                           ),
-                        ),
-                        const SizedBox(height: 15), // Add space between buttons
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/login');
-                            },
-                            style: OutlinedButton.styleFrom(
-                              primary: Colors.white,
-                              side: BorderSide(color: Colors.white),
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: TextUtil(
-                              text: "Back to Login",
+                          child: Text(
+                            "Back to Login",
+                            style: TextStyle(
                               color: Colors.white,
+                              fontFamily: 'Roboto', // Match font family
                             ),
                           ),
                         ),
-                        const Spacer(),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }
 
-class AnimatedTriangles extends StatefulWidget {
-  @override
-  _AnimatedTrianglesState createState() => _AnimatedTrianglesState();
-}
-
-class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    )..repeat(reverse: true);
-    _animation = Tween<double>(begin: -100, end: 250).animate(_controller);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Stack(
-        children: List.generate(10, (index) {
-          return AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Positioned(
-                left: _animation.value + (index * 100.0),
-                top: (index % 2 == 0) ? 0 : 50,
-                child: Opacity(
-                  opacity: 0.5,
-                  child: CustomPaint(
-                    size: Size(100, 100), // Size of the triangle
-                    painter: TrianglePainter(),
-                  ),
-                ),
-              );
-            },
-          );
-        }),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
-
-class TrianglePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = Colors.white.withOpacity(0.3) // Triangle color
-      ..style = PaintingStyle.fill;
-
-    final Path path = Path()
-      ..moveTo(size.width / 2, 0)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

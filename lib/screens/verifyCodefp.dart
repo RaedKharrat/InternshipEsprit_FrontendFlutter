@@ -1,9 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import FilteringTextInputFormatter here
-import '../data/bg_data.dart'; // Ensure bgList is defined here
-import '../utils/text_utils.dart'; // Ensure TextUtil is defined here
-import '../widgets/toolbar.dart'; // Import your custom toolbar
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import '../data/bg_data.dart';
+import '../utils/text_utils.dart';
+import '../widgets/toolbar.dart';
 
 class VerifyCodefpScreen extends StatefulWidget {
   const VerifyCodefpScreen({super.key});
@@ -16,6 +19,7 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
   int selectedIndex = 0;
   final List<TextEditingController> _otpControllers = List.generate(5, (index) => TextEditingController());
   final List<FocusNode> _otpFocusNodes = List.generate(5, (index) => FocusNode());
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -24,10 +28,8 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
       controller.addListener(() {
         String value = controller.text;
         if (value.length == 1) {
-          // Move to the next field if a digit is entered
           _focusNextField(index);
         } else if (value.isEmpty) {
-          // Move to the previous field if the field is emptied
           _focusPreviousField(index);
         }
       });
@@ -44,6 +46,61 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
     if (index > 0) {
       FocusScope.of(context).requestFocus(_otpFocusNodes[index - 1]);
     }
+  }
+
+  String getOtpCode() {
+    return _otpControllers.map((controller) => controller.text).join();
+  }
+
+  Future<void> verifyCode() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final code = getOtpCode();
+    final String email = ModalRoute.of(context)?.settings.arguments as String? ?? 'No email provided';
+
+    final response = await http.post(
+      Uri.parse('http://localhost:5000/api/pwd/confirm-otp'), // Replace with your backend URL
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'code': code}),
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (response.statusCode == 200) {
+Navigator.pushNamed(
+  context,
+  '/changepwd',
+  arguments: {
+    'email': email, // replace with actual email value
+    'code': code, // replace with actual OTP code value
+  },
+);
+    } else {
+      final responseData = jsonDecode(response.body);
+      _showErrorDialog(responseData['message'] ?? 'Code verification failed');
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -67,8 +124,8 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
             child: Container(
               margin: const EdgeInsets.all(20),
               child: Image.asset(
-                'assets/logoEsprit copy.png', // Ensure the path is correct
-                height: 60, // Adjust the height as needed
+                'assets/logoEsprit copy.png',
+                height: 60,
               ),
             ),
           ),
@@ -99,54 +156,51 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
                         ),
                         const SizedBox(height: 15),
                         Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: List.generate(5, (index) {
-    return Flexible(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5),
-        width: 45, // Reduced width from 50 to 45
-        child: TextFormField(
-          controller: _otpControllers[index],
-          focusNode: _otpFocusNodes[index],
-          keyboardType: TextInputType.number,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontSize: 24),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.red,
-            hintText: '_',
-            hintStyle: TextStyle(color: Colors.white70),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-            counterText: '', // Hide the counter text
-          ),
-          maxLength: 1,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
-          onChanged: (value) {
-            if (value.isNotEmpty) {
-              _focusNextField(index);
-            }
-          },
-          onEditingComplete: () {
-            if (_otpControllers[index].text.isEmpty) {
-              _focusPreviousField(index);
-            }
-          },
-        ),
-      ),
-    );
-  }),
-),
-
-                        const SizedBox(height: 50), // Increased space between OTP fields and buttons
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(5, (index) {
+                            return Flexible(
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 5),
+                                width: 45,
+                                child: TextFormField(
+                                  controller: _otpControllers[index],
+                                  focusNode: _otpFocusNodes[index],
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.white, fontSize: 24),
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.red,
+                                    hintText: '_',
+                                    hintStyle: TextStyle(color: Colors.white70),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    counterText: '',
+                                  ),
+                                  maxLength: 1,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  onChanged: (value) {
+                                    if (value.isNotEmpty) {
+                                      _focusNextField(index);
+                                    }
+                                  },
+                                  onEditingComplete: () {
+                                    if (_otpControllers[index].text.isEmpty) {
+                                      _focusPreviousField(index);
+                                    }
+                                  },
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                        const SizedBox(height: 50),
                         GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/changepwd');
-                          },
+                          onTap: _isLoading ? null : verifyCode,
                           child: Container(
                             height: 40,
                             width: double.infinity,
@@ -155,10 +209,12 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                             alignment: Alignment.center,
-                            child: TextUtil(
-                              text: "Confirm",
-                              color: Colors.black,
-                            ),
+                            child: _isLoading
+                                ? CircularProgressIndicator()
+                                : TextUtil(
+                                    text: "Confirm",
+                                    color: Colors.black,
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 15),
@@ -201,76 +257,74 @@ class _VerifyCodefpScreenState extends State<VerifyCodefpScreen> {
   }
 }
 
-// AnimatedTriangles widget
 class AnimatedTriangles extends StatefulWidget {
   @override
   _AnimatedTrianglesState createState() => _AnimatedTrianglesState();
 }
 
 class _AnimatedTrianglesState extends State<AnimatedTriangles> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  late final AnimationController _animationController;
+  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 10),
+    _animationController = AnimationController(
+      duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-    _animation = Tween<double>(begin: -100, end: 250).animate(_controller);
+
+    _animation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Stack(
-        children: List.generate(10, (index) {
-          return AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Positioned(
-                left: _animation.value + (index * 100.0),
-                top: (index % 2 == 0) ? 0 : 50,
-                child: Opacity(
-                  opacity: 0.5,
-                  child: CustomPaint(
-                    size: Size(100, 100), // Size of the triangle
-                    painter: TrianglePainter(),
-                  ),
-                ),
-              );
-            },
-          );
-        }),
-      ),
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Positioned(
+          top: -200 * _animation.value,
+          left: 0,
+          right: 0,
+          child: CustomPaint(
+            size: Size(MediaQuery.of(context).size.width, 200),
+            painter: TrianglePainter(_animation.value),
+          ),
+        );
+      },
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 }
 
-// Custom painter to draw triangles
 class TrianglePainter extends CustomPainter {
+  final double animationValue;
+
+  TrianglePainter(this.animationValue);
+
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
-      ..color = Colors.white.withOpacity(0.3) // Triangle color
+      ..color = Colors.red.withOpacity(0.5)
       ..style = PaintingStyle.fill;
 
     final Path path = Path()
-      ..moveTo(size.width / 2, 0)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
+      ..moveTo(size.width / 2, size.height * animationValue)
+      ..lineTo(size.width * (animationValue + 0.5), size.height)
+      ..lineTo(size.width * (0.5 - animationValue), size.height)
       ..close();
 
     canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
